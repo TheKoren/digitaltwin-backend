@@ -22,7 +22,6 @@ jobs:
         distribution: 'temurin'
     - name: Build with Gradle
       run: |
-          cd digitaltwin
           ./gradlew build
       working-directory: ./digitaltwin
         
