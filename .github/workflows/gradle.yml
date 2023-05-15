@@ -9,12 +9,8 @@ name: Java CI with Gradle
 
 on: [push]
 
-permissions:
-  contents: read
-
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -27,4 +23,5 @@ jobs:
     - name: Build with Gradle
         working-directory: ./digitaltwin
         run: |
+          cd digitaltwin
           ./gradlew build
