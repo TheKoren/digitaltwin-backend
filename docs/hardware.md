@@ -25,3 +25,6 @@
 [Espressif's SDK for Matter](https://github.com/espressif/esp-matter)
 
 Explore ESP-ZeroCode modules
+
+##### OpenThread support
+ For ESP32-H2 devices not in mass production atm.
