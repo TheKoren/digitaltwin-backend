@@ -25,4 +25,6 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
     - name: Build with Gradle
-      uses: digitaltwin/
+        working-directory: ./digitaltwin
+        run: |
+          ./gradlew build
