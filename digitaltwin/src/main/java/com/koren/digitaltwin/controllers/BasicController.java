@@ -4,6 +4,8 @@ import com.koren.digitaltwin.services.DataService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
@@ -49,5 +51,10 @@ public class BasicController {
         model.addAttribute("time", dateFormat.format(System.currentTimeMillis()));
         model.addAttribute("data", Arrays.toString(dataService.readCsvFile("data.csv").toArray()));
         return "index";
+    }
+
+    @PostMapping("/data")
+    public void receiveData (@RequestBody String data){
+        System.out.println("Received data: " + data);
     }
 }
