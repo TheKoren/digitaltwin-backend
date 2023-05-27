@@ -3,7 +3,6 @@ package com.koren.digitaltwin.models;
 public class WifiSignal {
     public int rssi;
     public int txPower;
-
     public int channel;
 
     public WifiSignal(){
