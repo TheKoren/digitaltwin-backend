@@ -16,7 +16,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.apache.commons:commons-csv:1.10.0'
-	implementation 'org.postgresql:postgresql:42.3.1'
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+	implementation group: 'org.springframework', name: 'spring-jdbc', version: '6.0.9'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
