@@ -1,19 +1,23 @@
 package com.koren.digitaltwin.services;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
+import com.koren.digitaltwin.models.Entry;
+import com.koren.digitaltwin.repositories.DataRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
-import java.io.*;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
-//@Service
-@Deprecated
+@Service
 public class DataService {
+    @Autowired
+    private DataRepository dataRepository;
+    public List<Entry> allData() {
+        return dataRepository.findAll();
+    }
+
+    public Optional<Entry> latestData(String mac) {
+        return dataRepository.findEntryByMac(mac).stream().max(Comparator.comparingLong(entry -> entry.timeStamp.toEpochMilli()));
+    }
 }

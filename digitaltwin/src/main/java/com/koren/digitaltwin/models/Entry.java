@@ -1,5 +1,8 @@
 package com.koren.digitaltwin.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import org.bson.types.ObjectId;
 import com.koren.digitaltwin.models.enums.WifiMode;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -8,23 +11,24 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
 
-@Document(collection="data")
+@Document(collection="node-values")
+@Data
 public class Entry implements Serializable {
     @Id
-    private Integer id;
-    private String mac;
-    private Instant timeStamp;
-    private Integer temperateValue;
-    private Integer humidityValue;
-    private Integer pressure;
-    private Integer tvocValue;
-    private Integer rssi;
-    private Integer txPower;
-    private Integer channel;
+    private ObjectId id;
+    private final String mac;
+    public final Instant timeStamp;
+    private final Integer temperateValue;
+    private final Integer humidityValue;
+    private final Integer pressure;
+    private final Integer tvocValue;
+    private final Integer rssi;
+    private final Integer txPower;
+    private final Integer channel;
     private WifiMode mode = WifiMode.UNKNOWN;
-    private List<String> addressList;
+    private final List<String> addressList;
 
-    public Entry(Integer id, String mac, Instant timeStamp, Integer temperateValue, Integer humidityValue, Integer pressure,
+    public Entry(ObjectId id, String mac, Instant timeStamp, Integer temperateValue, Integer humidityValue, Integer pressure,
                  Integer tvocValue, Integer rssi, Integer txPower, Integer channel, WifiMode mode, List<String> addressList) {
         this.id = id;
         this.mac = mac;
