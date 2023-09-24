@@ -16,6 +16,8 @@ env:
   MONGO_USER:  ${{ secrets.MONGO_USER }}
   MONGO_PASSWORD:  ${{ secrets.MONGO_PASSWORD }}
   MONGO_CLUSTER:  ${{ secrets.MONGO_CLUSTER }}
+  SERVER_PORT:  ${{ secrets.SERVER_PORT }}
+  SERVER_ADDRESS:  ${{ secrets.SERVER_ADDRESS }}
 jobs:
   build:
     runs-on: ubuntu-latest
