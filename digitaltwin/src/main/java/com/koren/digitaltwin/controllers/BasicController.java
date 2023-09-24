@@ -2,15 +2,11 @@ package com.koren.digitaltwin.controllers;
 
 import com.koren.digitaltwin.models.DataBundleImpl;
 import com.koren.digitaltwin.models.Entry;
-import com.koren.digitaltwin.services.DataRepository;
-import com.koren.digitaltwin.services.DataService;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.awt.*;
 import java.io.IOException;
@@ -22,13 +18,10 @@ import java.util.Arrays;
 
 import static com.koren.digitaltwin.Constants.APP_NAME;
 
-@Controller
+@Deprecated
 public class BasicController {
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     //private final DataService dataService = new DataService();
-
-    @Autowired
-    private DataRepository repository;
     private static int id = 0;
     private int n = 0;
 
@@ -59,13 +52,13 @@ public class BasicController {
         ++n;
         model.addAttribute("appName", APP_NAME);
         model.addAttribute("time", dateFormat.format(System.currentTimeMillis()));
-        model.addAttribute("data", Arrays.toString(repository.findAll().stream().map(Entry::toString).toArray()));
+        //model.addAttribute("data", Arrays.toString(repository.findAll().stream().map(Entry::toString).toArray()));
         return "index";
     }
 
     @GetMapping("/del")
     public String delete() {
-        repository.deleteAll();
+        //repository.deleteAll();
         return "index";
     }
 
@@ -74,7 +67,7 @@ public class BasicController {
         System.out.println("Received data: " + data);
         var dataBundle = new DataBundleImpl(data, id);
         var entry = new Entry(
-                id,
+                new ObjectId(),
                 dataBundle.mac,
                 dataBundle.timeStamp,
                 dataBundle.sensorData.temperateValue,
@@ -87,7 +80,7 @@ public class BasicController {
                 dataBundle.wifiData.mode,
                 dataBundle.wifiData.addressList
         );
-        repository.save(entry);
+        //repository.save(entry);
         id++;
     }
 }
