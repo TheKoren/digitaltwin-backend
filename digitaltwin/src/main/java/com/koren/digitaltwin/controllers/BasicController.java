@@ -18,7 +18,7 @@ import java.util.Arrays;
 
 import static com.koren.digitaltwin.Constants.APP_NAME;
 
-@Deprecated
+@Controller
 public class BasicController {
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     //private final DataService dataService = new DataService();
