@@ -11,6 +11,9 @@ on:
   pull_request:
     branches:
       - develop
+  push:
+    branches:
+      - develop
 env:
   MONGO_DATABASE:  ${{ secrets.MONGO_DATABASE }}
   MONGO_USER:  ${{ secrets.MONGO_USER }}
