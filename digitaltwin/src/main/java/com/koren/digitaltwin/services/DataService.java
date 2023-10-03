@@ -1,6 +1,6 @@
 package com.koren.digitaltwin.services;
 
-import com.koren.digitaltwin.models.Entry;
+import com.koren.digitaltwin.models.message.WifiMessage;
 import com.koren.digitaltwin.repositories.DataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,11 +13,15 @@ import java.util.Optional;
 public class DataService {
     @Autowired
     private DataRepository dataRepository;
-    public List<Entry> allData() {
+    public List<WifiMessage> allData() {
         return dataRepository.findAll();
     }
 
-    public Optional<Entry> latestData(String mac) {
-        return dataRepository.findEntryByMac(mac).stream().max(Comparator.comparingLong(entry -> entry.timeStamp.toEpochMilli()));
+    public Optional<WifiMessage> latestData(String mac) {
+        return dataRepository.findMessageByMac(mac).stream().max(Comparator.comparingLong(message -> message.timestamp.toEpochMilli()));
+    }
+
+    public void saveData(WifiMessage message) {
+        dataRepository.save(message);
     }
 }
