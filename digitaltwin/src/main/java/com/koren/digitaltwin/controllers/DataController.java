@@ -1,8 +1,7 @@
 package com.koren.digitaltwin.controllers;
 
-import com.koren.digitaltwin.models.Entry;
+import com.koren.digitaltwin.models.message.WifiMessage;
 import com.koren.digitaltwin.services.DataService;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +18,12 @@ public class DataController {
     private DataService dataService;
 
     @GetMapping
-    public ResponseEntity<List<Entry>> getAllData() {
-        return new ResponseEntity<List<Entry>>(dataService.allData(),HttpStatus.OK);
+    public ResponseEntity<List<WifiMessage>> getAllData() {
+        return new ResponseEntity<List<WifiMessage>>(dataService.allData(),HttpStatus.OK);
     }
 
     @GetMapping("/{mac}")
-    public ResponseEntity<Optional<Entry>> getLatestData(@PathVariable String mac) {
-        return new ResponseEntity<Optional<Entry>>(dataService.latestData(mac), HttpStatus.OK);
+    public ResponseEntity<Optional<WifiMessage>> getLatestData(@PathVariable String mac) {
+        return new ResponseEntity<Optional<WifiMessage>>(dataService.latestData(mac), HttpStatus.OK);
     }
 }
