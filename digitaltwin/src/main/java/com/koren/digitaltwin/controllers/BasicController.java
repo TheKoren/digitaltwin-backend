@@ -1,8 +1,8 @@
 package com.koren.digitaltwin.controllers;
 
 import com.koren.digitaltwin.configuration.Config;
+import com.koren.digitaltwin.models.LiveModel;
 import com.koren.digitaltwin.models.message.WifiMessageFactory;
-import com.koren.digitaltwin.repositories.DataRepository;
 import com.koren.digitaltwin.services.DataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +19,16 @@ import java.util.List;
 @Controller
 public class BasicController {
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    @Autowired
-    private DataService dataService;
+    private final LiveModel liveModel;
+
+    private final DataService dataService;
 
     private final Config config;
 
     @Autowired
-    public BasicController(Config config) {
+    public BasicController(LiveModel liveModel, DataService dataService, Config config) {
+        this.liveModel = liveModel;
+        this.dataService = dataService;
         this.config = config;
     }
 
@@ -37,6 +40,7 @@ public class BasicController {
         System.out.println("Received data: " + data);
         var message = messageFactory.createMessage(data);
         dataService.saveData(message);
+        liveModel.updateLiveMessage(message);
 
         return ResponseEntity.ok("Data received successfully");
     }

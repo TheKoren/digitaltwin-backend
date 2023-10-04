@@ -20,6 +20,7 @@ dependencies {
 	implementation group: 'me.paulschwarz', name: 'spring-dotenv', version: '4.0.0'
 	compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.30'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	annotationProcessor 'org.projectlombok:lombok:1.18.30'
 }
 
 tasks.named('test') {
