@@ -1,5 +1,6 @@
 package com.koren.digitaltwin.controllers;
 
+import com.koren.digitaltwin.models.LiveModel;
 import com.koren.digitaltwin.models.message.WifiMessage;
 import com.koren.digitaltwin.services.DataService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,15 @@ import java.util.Optional;
 @RequestMapping("/api/data")
 public class DataController {
     @Autowired
-    private DataService dataService;
+    private final DataService dataService;
+
+    private final LiveModel liveModel;
+
+    @Autowired
+    public DataController(DataService dataService, LiveModel liveModel) {
+        this.dataService = dataService;
+        this.liveModel = liveModel;
+    }
 
     @GetMapping
     public ResponseEntity<List<WifiMessage>> getAllData() {
@@ -25,5 +34,10 @@ public class DataController {
     @GetMapping("/{mac}")
     public ResponseEntity<Optional<WifiMessage>> getLatestData(@PathVariable String mac) {
         return new ResponseEntity<Optional<WifiMessage>>(dataService.latestData(mac), HttpStatus.OK);
+    }
+
+    @GetMapping("/live")
+    public ResponseEntity<Optional<List<WifiMessage>>> getLiveModel() {
+        return new ResponseEntity<Optional<List<WifiMessage>>>(liveModel.getLiveMessages(), HttpStatus.OK);
     }
 }
