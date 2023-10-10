@@ -18,8 +18,16 @@ public class WifiData {
     public int channel;
     @Field
     public WifiMode mode = WifiMode.UNKNOWN;
+
+    @Field
+    public long sensorRead;
+
+    @Field
+    public long sensorExec;
     @Field
     public List<String> addressList;
+
+
 
     public WifiData(Map<String, Object> wifiValues) {
         this.rssi = Integer.parseInt(wifiValues.get("rssi").toString());
@@ -35,14 +43,18 @@ public class WifiData {
             default -> {
             }
         }
+        this.sensorExec = Long.parseLong(wifiValues.get("sensorExec").toString());
+        this.sensorRead = Long.parseLong(wifiValues.get("sensorRead").toString());
     }
 
-    public WifiData(int rssi, int channel, int txPower, List<String> addressList, WifiMode mode) {
+    public WifiData(int rssi, int channel, int txPower, List<String> addressList, WifiMode mode, long sensorExec, long sensorRead) {
         this.rssi = rssi;
         this.channel = channel;
         this.txPower = txPower;
         this.addressList = addressList;
         this.mode = mode;
+        this.sensorRead = sensorRead;
+        this.sensorExec = sensorExec;
     }
 
     public WifiData() {
@@ -50,10 +62,12 @@ public class WifiData {
         this.channel = 0;
         this.txPower = 0;
         this.addressList = null;
+        this.sensorRead = 0;
+        this.sensorExec = 0;
     }
 
     @Override
     public String toString(){
-        return String.format("rssi: %s, txPower: %s, channel: %s, mode: %s", rssi, txPower, channel, mode);
+        return String.format("rssi: %s, txPower: %s, channel: %s, mode: %s, SensorRead: %s, SensorExec: %s", rssi, txPower, channel, mode, sensorRead, sensorExec);
     }
 }

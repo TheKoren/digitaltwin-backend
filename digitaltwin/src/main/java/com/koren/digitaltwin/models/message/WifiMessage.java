@@ -11,6 +11,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 
 @Document(collection="node-values")
 @Data
@@ -30,7 +34,7 @@ public class WifiMessage {
     WifiMessage(ObjectId id, String mac, SensorData sensorData, WifiData wifiData) {
         this.id = id;
         this.mac = mac;
-        this.timestamp = Instant.now();
+        this.timestamp = ZonedDateTime.now(ZoneId.systemDefault()).toInstant().plus(2, ChronoUnit.HOURS);
         this.sensorData = sensorData;
         this.wifiData = wifiData;
     }
