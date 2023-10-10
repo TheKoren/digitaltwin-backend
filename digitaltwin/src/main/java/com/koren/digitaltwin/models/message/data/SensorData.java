@@ -8,27 +8,43 @@ import java.util.Map;
 @Data
 public class SensorData {
     @Field
-    public int temperateValue;
+    public double temperateValue;
     @Field
-    public int humidityValue;
+    public double humidityValue;
     @Field
-    public int pressure;
+    public double pressure;
+    @Field
+    public long eco2;
     @Field
     public int tvocValue;
+    @Field
+    public double sound;
+    @Field
+    public double light;
+    @Field
+    public int uv;
 
 
     public SensorData(Map<String, Object> sensorValues) {
-        this.temperateValue = Integer.parseInt(sensorValues.get("temp").toString());
-        this.humidityValue = Integer.parseInt(sensorValues.get("hum").toString());
-        this.pressure = Integer.parseInt(sensorValues.get("press").toString());
-        this.tvocValue = Integer.parseInt(sensorValues.get("gas").toString());
+        this.temperateValue = Double.parseDouble(sensorValues.get("temp").toString()) / 1000;
+        this.humidityValue = Double.parseDouble(sensorValues.get("hum").toString()) / 1000;
+        this.pressure = Double.parseDouble(sensorValues.get("press").toString()) / 10000;
+        this.tvocValue = Integer.parseInt(sensorValues.get("tvoc").toString());
+        this.sound = Double.parseDouble(sensorValues.get("sound").toString()) / 100;
+        this.light = Double.parseDouble(sensorValues.get("light").toString()) / 10;
+        this.uv = Integer.parseInt(sensorValues.get("uv").toString());
+        this.eco2 = Long.parseLong(sensorValues.get("eco2").toString());
     }
 
-    public SensorData(int temperateValue, int humidityValue, int pressure, int tvocValue) {
+    public SensorData(double temperateValue, double humidityValue, double pressure, int tvocValue, double sound, double light, int uv, long eco2) {
         this.temperateValue = temperateValue;
         this.humidityValue = humidityValue;
         this.pressure = pressure;
         this.tvocValue = tvocValue;
+        this.sound = sound;
+        this.light = light;
+        this.uv = uv;
+        this.eco2 = eco2;
     }
 
     public SensorData() {
@@ -36,12 +52,17 @@ public class SensorData {
         this.humidityValue = 0;
         this.pressure = 0;
         this.tvocValue = 0;
+        this.sound = 0;
+        this.light = 0;
+        this.uv = 0;
+        this.eco2 = 0;
     }
 
 
 
     @Override
     public String toString() {
-        return String.format("Temperature: %s, Humidity: %s, Pressure: %s, TVOC: %s. \n", temperateValue, humidityValue, pressure, tvocValue);
+        return String.format("Temperature: %s, Humidity: %s, Pressure: %s, TVOC: %s. \n Sound: %s, Light: %s, UV: %s, ECO2: %s.",
+                temperateValue, humidityValue, pressure, tvocValue, sound, light, uv, eco2);
     }
 }
