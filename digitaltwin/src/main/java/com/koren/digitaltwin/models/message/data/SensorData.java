@@ -8,7 +8,7 @@ import java.util.Map;
 @Data
 public class SensorData {
     @Field
-    public double temperateValue;
+    public double temperatureValue;
     @Field
     public double humidityValue;
     @Field
@@ -26,7 +26,7 @@ public class SensorData {
 
 
     public SensorData(Map<String, Object> sensorValues) {
-        this.temperateValue = Double.parseDouble(sensorValues.get("temp").toString()) / 1000;
+        this.temperatureValue = Double.parseDouble(sensorValues.get("temp").toString()) / 1000;
         this.humidityValue = Double.parseDouble(sensorValues.get("hum").toString()) / 1000;
         this.pressure = Double.parseDouble(sensorValues.get("press").toString()) / 10000;
         this.tvocValue = Integer.parseInt(sensorValues.get("tvoc").toString());
@@ -37,7 +37,7 @@ public class SensorData {
     }
 
     public SensorData(double temperateValue, double humidityValue, double pressure, int tvocValue, double sound, double light, int uv, long eco2) {
-        this.temperateValue = temperateValue;
+        this.temperatureValue = temperateValue;
         this.humidityValue = humidityValue;
         this.pressure = pressure;
         this.tvocValue = tvocValue;
@@ -48,7 +48,7 @@ public class SensorData {
     }
 
     public SensorData() {
-        this.temperateValue = 0;
+        this.temperatureValue = 0;
         this.humidityValue = 0;
         this.pressure = 0;
         this.tvocValue = 0;
@@ -63,6 +63,6 @@ public class SensorData {
     @Override
     public String toString() {
         return String.format("Temperature: %s, Humidity: %s, Pressure: %s, TVOC: %s. \n Sound: %s, Light: %s, UV: %s, ECO2: %s.",
-                temperateValue, humidityValue, pressure, tvocValue, sound, light, uv, eco2);
+                temperatureValue, humidityValue, pressure, tvocValue, sound, light, uv, eco2);
     }
 }
