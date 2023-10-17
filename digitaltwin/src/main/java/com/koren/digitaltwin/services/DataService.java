@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class DataService {
@@ -21,7 +23,21 @@ public class DataService {
         return dataRepository.findMessageByMac(mac).stream().max(Comparator.comparingLong(message -> message.timestamp.toEpochMilli()));
     }
 
+    public Set<String> allMacs() {
+        List<WifiMessage> allMessages = dataRepository.findAll();
+        return allMessages.stream().map(WifiMessage::getMac).collect(Collectors.toSet());
+    }
+
     public void saveData(WifiMessage message) {
         dataRepository.save(message);
+    }
+
+    public List<WifiMessage> wifiMessageByMac(String mac) {
+        return dataRepository.findMessagesByMac(mac);
+    }
+
+    public String deleteAll() {
+        dataRepository.deleteAll();
+        return "Done";
     }
 }

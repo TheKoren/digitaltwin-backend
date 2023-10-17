@@ -5,9 +5,12 @@ import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface DataRepository extends MongoRepository<WifiMessage, ObjectId> {
     Optional<WifiMessage> findMessageByMac(String mac);
+
+    List<WifiMessage> findMessagesByMac(String mac);
 }

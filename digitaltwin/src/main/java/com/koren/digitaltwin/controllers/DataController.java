@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -39,5 +40,20 @@ public class DataController {
     @GetMapping("/live")
     public ResponseEntity<Optional<List<WifiMessage>>> getLiveModel() {
         return new ResponseEntity<Optional<List<WifiMessage>>>(liveModel.getLiveMessages(), HttpStatus.OK);
+    }
+
+    @GetMapping("/all/macs")
+    public ResponseEntity<Set<String>> getAllMacs() {
+        return new ResponseEntity<Set<String>>(dataService.allMacs(), HttpStatus.OK);
+    }
+
+    @GetMapping("/all/{mac}")
+    public ResponseEntity<List<WifiMessage>> getWifiMessageByMac(@PathVariable String mac) {
+        return new ResponseEntity<List<WifiMessage>>(dataService.wifiMessageByMac(mac), HttpStatus.OK);
+    }
+
+    @GetMapping("/test/del")
+    public ResponseEntity<String> deleteAll() {
+        return new ResponseEntity<String>(dataService.deleteAll(), HttpStatus.OK);
     }
 }
