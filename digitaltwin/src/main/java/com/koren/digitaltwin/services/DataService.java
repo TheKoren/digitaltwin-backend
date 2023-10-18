@@ -36,6 +36,11 @@ public class DataService {
         return dataRepository.findMessagesByMac(mac);
     }
 
+    public List<WifiMessage> wifiMessageByMacAndNumber(String mac, int num) {
+        List<WifiMessage> messages = dataRepository.findMessagesByMac(mac);
+        return messages.size() <= num ? messages : messages.subList(messages.size() - num, messages.size());
+    }
+
     public String deleteAll() {
         dataRepository.deleteAll();
         return "Done";
