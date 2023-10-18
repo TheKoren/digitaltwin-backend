@@ -14,8 +14,6 @@ public class NotificationService {
     private NotificationRepository notificationRepository;
 
     public List<Notification> allNotification() {
-        var notifications = notificationRepository.findAll();
-        System.out.println(notifications);
         return notificationRepository.findAll();}
 
     public void saveNotification(Notification notification) {
