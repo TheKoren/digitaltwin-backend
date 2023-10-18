@@ -1,10 +1,15 @@
 package com.koren.digitaltwin.models;
 
+import com.koren.digitaltwin.models.notification.NotificationType;
+import com.koren.digitaltwin.models.notification.ModelChangeNotification;
 import com.koren.digitaltwin.models.message.WifiMessage;
+import com.koren.digitaltwin.services.NotificationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -13,6 +18,9 @@ import java.util.Optional;
 @Component
 public class LiveModel {
     private List<WifiMessage> liveMessages = new ArrayList<>();
+
+    @Autowired
+    private NotificationService notificationService;
 
     public Optional<List<WifiMessage>> getLiveMessages() {
         return Optional.of(liveMessages);
@@ -46,9 +54,9 @@ public class LiveModel {
             WifiMessage message = iterator.next();
             Instant messageTime = message.getTimestamp();
 
-            if (messageTime.isBefore(currentTime.minusSeconds(120))) {
+            if (messageTime.isBefore(currentTime.plus(2, ChronoUnit.HOURS).minusSeconds(60))) {
                 iterator.remove();
-                System.out.printf("Removed message with MAC " + message.getMac());
+                notificationService.saveNotification(new ModelChangeNotification(NotificationType.WARNING, "Device timeout: " + message.getMac(), message));
             }
         }
     }

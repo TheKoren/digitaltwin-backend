@@ -52,6 +52,11 @@ public class DataController {
         return new ResponseEntity<List<WifiMessage>>(dataService.wifiMessageByMac(mac), HttpStatus.OK);
     }
 
+    @GetMapping("/all/{mac}/{num}")
+    public ResponseEntity<List<WifiMessage>> getWifiMessageByMacAndNumber(@PathVariable String mac, @PathVariable int num) {
+        return new ResponseEntity<List<WifiMessage>>(dataService.wifiMessageByMacAndNumber(mac, num), HttpStatus.OK);
+    }
+
     @GetMapping("/test/del")
     public ResponseEntity<String> deleteAll() {
         return new ResponseEntity<String>(dataService.deleteAll(), HttpStatus.OK);
