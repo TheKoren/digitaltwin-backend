@@ -2,7 +2,9 @@ package com.koren.digitaltwin.controllers;
 
 import com.koren.digitaltwin.configuration.Config;
 import com.koren.digitaltwin.models.LiveModel;
-import com.koren.digitaltwin.models.message.WifiMessageFactory;
+import com.koren.digitaltwin.models.message.MessageFactory;
+import com.koren.digitaltwin.models.message.MonitorMessage;
+import com.koren.digitaltwin.models.message.WifiMessage;
 import com.koren.digitaltwin.services.DataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,15 +34,19 @@ public class BasicController {
         this.config = config;
     }
 
-    WifiMessageFactory messageFactory = new WifiMessageFactory();
+    MessageFactory messageFactory = new MessageFactory();
 
     @PostMapping("/data")
     @ResponseBody
     public ResponseEntity<String> receiveData (@RequestBody String data){
         System.out.println("Received data: " + data);
         var message = messageFactory.createMessage(data);
-        dataService.saveData(message);
-        liveModel.updateLiveMessage(message);
+        if (message instanceof WifiMessage) {
+            dataService.saveData((WifiMessage) message);
+            liveModel.updateLiveMessage((WifiMessage) message);
+        } else if (message instanceof MonitorMessage) {
+            liveModel.setMonitorMessage((MonitorMessage) message);
+        }
 
         return ResponseEntity.ok("Data received successfully");
     }

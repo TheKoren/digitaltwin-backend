@@ -21,4 +21,18 @@ public class CastHelper {
             throw new IllegalArgumentException("Object is not of type List<String>");
         }
     }
+
+    @SuppressWarnings("unchecked")
+    public static List<Map<String, Object>> castToListMapStringObject(Object obj) {
+        if (obj instanceof List<?>) {
+            List<?> list = (List<?>) obj;
+            if (!list.isEmpty() && list.get(0) instanceof Map<?, ?>) {
+                return (List<Map<String, Object>>) obj;
+            } else {
+                throw new IllegalArgumentException("Object is not a List of type List<Map<String, Object>>");
+            }
+        } else {
+            throw new IllegalArgumentException("Object is not of type List<?>");
+        }
+    }
 }
