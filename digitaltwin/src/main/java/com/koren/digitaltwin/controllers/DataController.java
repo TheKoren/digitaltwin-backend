@@ -1,6 +1,7 @@
 package com.koren.digitaltwin.controllers;
 
 import com.koren.digitaltwin.models.LiveModel;
+import com.koren.digitaltwin.models.message.MonitorMessage;
 import com.koren.digitaltwin.models.message.WifiMessage;
 import com.koren.digitaltwin.services.DataService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,11 @@ public class DataController {
     @GetMapping("/live")
     public ResponseEntity<Optional<List<WifiMessage>>> getLiveModel() {
         return new ResponseEntity<Optional<List<WifiMessage>>>(liveModel.getLiveMessages(), HttpStatus.OK);
+    }
+
+    @GetMapping("/monitor")
+    public ResponseEntity<MonitorMessage> getMonitorMessage() {
+        return new ResponseEntity<>(liveModel.getMonitorMessage(), HttpStatus.OK);
     }
 
     @GetMapping("/all/macs")

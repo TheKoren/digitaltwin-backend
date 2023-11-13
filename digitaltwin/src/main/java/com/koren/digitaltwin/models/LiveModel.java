@@ -1,9 +1,13 @@
 package com.koren.digitaltwin.models;
 
+import com.koren.digitaltwin.models.message.Message;
+import com.koren.digitaltwin.models.message.MonitorMessage;
 import com.koren.digitaltwin.models.notification.NotificationType;
 import com.koren.digitaltwin.models.notification.ModelChangeNotification;
 import com.koren.digitaltwin.models.message.WifiMessage;
 import com.koren.digitaltwin.services.NotificationService;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -19,6 +23,9 @@ import java.util.Optional;
 public class LiveModel {
     private List<WifiMessage> liveMessages = new ArrayList<>();
 
+    @Getter
+    @Setter
+    private MonitorMessage monitorMessage;
     @Autowired
     private NotificationService notificationService;
 
@@ -60,4 +67,5 @@ public class LiveModel {
             }
         }
     }
+
 }
