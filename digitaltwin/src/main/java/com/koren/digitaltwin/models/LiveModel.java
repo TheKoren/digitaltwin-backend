@@ -1,10 +1,13 @@
 package com.koren.digitaltwin.models;
 
+import com.koren.digitaltwin.analysis.StabilityAnalyzer;
 import com.koren.digitaltwin.models.message.Message;
 import com.koren.digitaltwin.models.message.MonitorMessage;
 import com.koren.digitaltwin.models.notification.NotificationType;
 import com.koren.digitaltwin.models.notification.ModelChangeNotification;
 import com.koren.digitaltwin.models.message.WifiMessage;
+import com.koren.digitaltwin.repositories.DataRepository;
+import com.koren.digitaltwin.services.DataService;
 import com.koren.digitaltwin.services.NotificationService;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,6 +31,9 @@ public class LiveModel {
     private MonitorMessage monitorMessage;
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private DataService dataService;
 
     public Optional<List<WifiMessage>> getLiveMessages() {
         return Optional.of(liveMessages);
@@ -66,6 +72,7 @@ public class LiveModel {
                 notificationService.saveNotification(new ModelChangeNotification(NotificationType.WARNING, "Device timeout: " + message.getMac(), message));
             }
         }
+        StabilityAnalyzer.detectDelays(dataService.wifiMessageByMacAndNumber("98:F4:AB:6E:64:69", 100));
     }
 
 }
