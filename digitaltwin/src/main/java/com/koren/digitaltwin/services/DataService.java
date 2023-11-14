@@ -1,5 +1,6 @@
 package com.koren.digitaltwin.services;
 
+import com.koren.digitaltwin.models.message.Message;
 import com.koren.digitaltwin.models.message.WifiMessage;
 import com.koren.digitaltwin.repositories.DataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,12 +33,12 @@ public class DataService {
         dataRepository.save(message);
     }
 
-    public List<WifiMessage> wifiMessageByMac(String mac) {
+    public List<Message> wifiMessageByMac(String mac) {
         return dataRepository.findMessagesByMac(mac);
     }
 
-    public List<WifiMessage> wifiMessageByMacAndNumber(String mac, int num) {
-        List<WifiMessage> messages = dataRepository.findMessagesByMac(mac);
+    public List<Message> wifiMessageByMacAndNumber(String mac, int num) {
+        List<Message> messages = dataRepository.findMessagesByMac(mac);
         return messages.size() <= num ? messages : messages.subList(messages.size() - num, messages.size());
     }
 

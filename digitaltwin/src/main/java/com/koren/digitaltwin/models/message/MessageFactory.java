@@ -26,6 +26,7 @@ public class MessageFactory{
                     new WifiData(CastHelper.castToMapStringObject(payload.get("operational")))
             );
         }
+        System.out.println("nah mate");
         return null;
     }
 

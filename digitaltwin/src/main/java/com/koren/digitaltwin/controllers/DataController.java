@@ -1,6 +1,7 @@
 package com.koren.digitaltwin.controllers;
 
 import com.koren.digitaltwin.models.LiveModel;
+import com.koren.digitaltwin.models.message.Message;
 import com.koren.digitaltwin.models.message.MonitorMessage;
 import com.koren.digitaltwin.models.message.WifiMessage;
 import com.koren.digitaltwin.services.DataService;
@@ -54,13 +55,13 @@ public class DataController {
     }
 
     @GetMapping("/all/{mac}")
-    public ResponseEntity<List<WifiMessage>> getWifiMessageByMac(@PathVariable String mac) {
-        return new ResponseEntity<List<WifiMessage>>(dataService.wifiMessageByMac(mac), HttpStatus.OK);
+    public ResponseEntity<List<Message>> getWifiMessageByMac(@PathVariable String mac) {
+        return new ResponseEntity<List<Message>>(dataService.wifiMessageByMac(mac), HttpStatus.OK);
     }
 
     @GetMapping("/all/{mac}/{num}")
-    public ResponseEntity<List<WifiMessage>> getWifiMessageByMacAndNumber(@PathVariable String mac, @PathVariable int num) {
-        return new ResponseEntity<List<WifiMessage>>(dataService.wifiMessageByMacAndNumber(mac, num), HttpStatus.OK);
+    public ResponseEntity<List<Message>> getWifiMessageByMacAndNumber(@PathVariable String mac, @PathVariable int num) {
+        return new ResponseEntity<List<Message>>(dataService.wifiMessageByMacAndNumber(mac, num), HttpStatus.OK);
     }
 
     @GetMapping("/test/del")
