@@ -17,15 +17,19 @@ public class Application {
 		SpringApplication.run(Application.class, args);
 	}
 
+	/**
+	 * Configure CORS for the application.
+	 *
+	 * @return WebMvcConfigurer with CORS configuration.
+	 */
 	@Bean
-	public WebMvcConfigurer corsConfigurer(){
+	public WebMvcConfigurer corsConfigurer() {
 		return new WebMvcConfigurer() {
 			@Override
-			public void addCorsMappings(CorsRegistry registry){
+			public void addCorsMappings(CorsRegistry registry) {
+				// Allow requests from http://localhost:3000
 				registry.addMapping("/**").allowedOrigins("http://localhost:3000");
 			}
 		};
 	}
-
-
 }
