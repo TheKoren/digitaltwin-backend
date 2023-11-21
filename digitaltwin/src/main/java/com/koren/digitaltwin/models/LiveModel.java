@@ -17,14 +17,19 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+/**
+ * Represents the live model in the digital twin system, managing live messages and conducting stability analysis.
+ */
 @Component
 public class LiveModel {
     private List<WifiMessage> liveMessages = new ArrayList<>();
+    @Getter
+    private Map<String, List<WifiMessage>> messagesForAnalysis = new HashMap<>();
+
+    @Autowired
+    private StabilityAnalyzer stabilityAnalyzer;
 
     @Getter
     @Setter
@@ -35,12 +40,34 @@ public class LiveModel {
     @Autowired
     private DataService dataService;
 
+    /**
+     * Retrieves the optional list of live Wifi messages.
+     *
+     * @return Optional containing the list of live Wifi messages.
+     */
     public Optional<List<WifiMessage>> getLiveMessages() {
         return Optional.of(liveMessages);
     }
 
+    /**
+     * Updates the live messages and the analysis map with the given Wifi message.
+     *
+     * @param message The Wifi message to be added or updated.
+     */
     public void updateLiveMessage(WifiMessage message) {
         boolean found = false;
+        String mac = message.getMac();
+        if (messagesForAnalysis.containsKey(mac)) {
+            List<WifiMessage> macMessages = messagesForAnalysis.get(mac);
+            if (macMessages.size() == 20) {
+                macMessages.remove(macMessages.size() - 1);
+            }
+            macMessages.add(0, message);
+        } else {
+            List<WifiMessage> newMacMessages = new LinkedList<>();
+            newMacMessages.add(message);
+            messagesForAnalysis.put(mac, newMacMessages);
+        }
         for (WifiMessage existingMessage : liveMessages) {
             if(existingMessage.getMac().equals(message.getMac())) {
                 liveMessages.remove(existingMessage);
@@ -58,6 +85,9 @@ public class LiveModel {
         }
     }
 
+    /**
+     * Scheduled method to check network nodes, remove inactive nodes, and conduct stability analysis.
+     */
     @Scheduled(fixedRate = 60000)
     public void checkNetworkNodes() {
         Instant currentTime = Instant.now();
@@ -69,10 +99,14 @@ public class LiveModel {
 
             if (messageTime.isBefore(currentTime.plus(2, ChronoUnit.HOURS).minusSeconds(60))) {
                 iterator.remove();
-                notificationService.saveNotification(new ModelChangeNotification(NotificationType.WARNING, "Device timeout: " + message.getMac(), message));
+                notificationService.saveNotification(new ModelChangeNotification(NotificationType.WARNING, "Device lost: " + message.getMac(), message));
             }
         }
-        StabilityAnalyzer.detectDelays(dataService.wifiMessageByMacAndNumber("98:F4:AB:6E:64:69", 100));
+        // If node is in the model, conduct analysis
+        stabilityAnalyzer.detectCrashes(liveMessages);
+        for (String mac : liveMessages.stream().map(WifiMessage::getMac).toList()) {
+            stabilityAnalyzer.detectDelays(messagesForAnalysis.get(mac));
+        }
     }
 
 }
