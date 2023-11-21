@@ -8,7 +8,16 @@ import org.springframework.boot.json.JacksonJsonParser;
 
 import java.util.Map;
 
+/**
+ * Factory class for creating instances of messages based on JSON data.
+ */
 public class MessageFactory{
+    /**
+     * Creates a message based on the provided JSON data.
+     *
+     * @param data The JSON data representing the message.
+     * @return An instance of a message (either MonitorMessage or WifiMessage).
+     */
     public Message createMessage(String data) {
         var payload = parseJsonData(data);
         var header = CastHelper.castToMapStringObject(payload.get("header"));
@@ -30,6 +39,12 @@ public class MessageFactory{
         return null;
     }
 
+    /**
+     * Parses JSON data into a Map of key-value pairs.
+     *
+     * @param data The JSON data to be parsed.
+     * @return A Map representing the parsed JSON data.
+     */
     Map<String, Object> parseJsonData(String data) {
         return new JacksonJsonParser().parseMap(data);
     }
