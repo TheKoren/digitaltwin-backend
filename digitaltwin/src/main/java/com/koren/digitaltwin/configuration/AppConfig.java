@@ -37,7 +37,7 @@ public class AppConfig {
     @Bean
     public Config loadConfig() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        File configFile = new ClassPathResource(configFilePath).getFile();
+        File configFile = new ClassPathResource("config.json").getFile();
 
         return objectMapper.readValue(configFile, Config.class);
     }
