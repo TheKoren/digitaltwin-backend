@@ -1,5 +1,6 @@
 package com.koren.digitaltwin.analysis;
 
+import com.koren.digitaltwin.analysis.enums.MeasurementValueType;
 import com.koren.digitaltwin.models.message.WifiMessage;
 import com.koren.digitaltwin.models.notification.DropNotification;
 import com.koren.digitaltwin.models.notification.NotificationType;
@@ -58,7 +59,7 @@ public class DropAnalyzer {
     /**
      * Detect drops in a specific measurement value type for a given list of WifiMessages.
      *
-     * @param messageList        List of WifiMessages for analysis.
+     * @param messageList          List of WifiMessages for analysis.
      * @param measurementValueType Measurement value type for analysis.
      */
     private void detectMeasurementDrop(List<WifiMessage> messageList, MeasurementValueType measurementValueType) {
@@ -67,8 +68,8 @@ public class DropAnalyzer {
         }
         String mac = messageList.get(0).getMac();
         for (int i = messageList.size() - 1; i >= 1; i--) {
-            WifiMessage currentMessage = messageList.get(i-1);
-            if(currentMessage.getTimestamp().toEpochMilli() < internalCache.get(mac).get(measurementValueType)) {
+            WifiMessage currentMessage = messageList.get(i - 1);
+            if (currentMessage.getTimestamp().toEpochMilli() < internalCache.get(mac).get(measurementValueType)) {
                 continue;
             }
             WifiMessage previousMessage = messageList.get(i);
@@ -87,9 +88,9 @@ public class DropAnalyzer {
     /**
      * Get the difference in a specific measurement value between two WifiMessages.
      *
-     * @param currentMessage   The current WifiMessage.
-     * @param previousMessage  The previous WifiMessage.
-     * @param valueType        Measurement value type.
+     * @param currentMessage  The current WifiMessage.
+     * @param previousMessage The previous WifiMessage.
+     * @param valueType       Measurement value type.
      * @return The absolute difference in the measurement value.
      */
     private double getValueDifference(WifiMessage currentMessage, WifiMessage previousMessage, MeasurementValueType valueType) {
@@ -98,7 +99,16 @@ public class DropAnalyzer {
                     Math.abs(currentMessage.getSensorData().getTemperatureValue() - previousMessage.getSensorData().getTemperatureValue());
             case TVOC ->
                     Math.abs(currentMessage.getSensorData().getTvocValue() - previousMessage.getSensorData().getTvocValue());
-            // TODO: Add other measurement types as needed
+            case HUMIDITY ->
+                    Math.abs(currentMessage.getSensorData().getHumidityValue() - previousMessage.getSensorData().getHumidityValue());
+            case ECO2 -> Math.abs(currentMessage.getSensorData().getEco2() - previousMessage.getSensorData().getEco2());
+            case PRESSURE ->
+                    Math.abs(currentMessage.getSensorData().getPressure() - previousMessage.getSensorData().getPressure());
+            case LIGHT ->
+                    Math.abs(currentMessage.getSensorData().getLight() - previousMessage.getSensorData().getLight());
+            case UV -> Math.abs(currentMessage.getSensorData().getUv() - previousMessage.getSensorData().getUv());
+            case SOUND ->
+                    Math.abs(currentMessage.getSensorData().getSound() - previousMessage.getSensorData().getSound());
             default -> throw new IllegalArgumentException("Unsupported measurement value type");
         };
     }
@@ -107,15 +117,20 @@ public class DropAnalyzer {
     /**
      * Get the value of a specific measurement type from a WifiMessage.
      *
-     * @param message     The WifiMessage.
-     * @param valueType   Measurement value type.
+     * @param message   The WifiMessage.
+     * @param valueType Measurement value type.
      * @return The value of the measurement type.
      */
     private double getValue(WifiMessage message, MeasurementValueType valueType) {
         return switch (valueType) {
             case TEMPERATURE -> message.getSensorData().getTemperatureValue();
             case TVOC -> message.getSensorData().getTvocValue();
-            // TODO: Add other measurement types as needed
+            case HUMIDITY -> message.getSensorData().getHumidityValue();
+            case ECO2 -> message.getSensorData().getEco2();
+            case PRESSURE -> message.getSensorData().getPressure();
+            case LIGHT -> message.getSensorData().getLight();
+            case UV -> message.getSensorData().getUv();
+            case SOUND -> message.getSensorData().getSound();
             default -> throw new IllegalArgumentException("Unsupported measurement value type");
         };
     }

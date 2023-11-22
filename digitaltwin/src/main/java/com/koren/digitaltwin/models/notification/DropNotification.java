@@ -1,6 +1,6 @@
 package com.koren.digitaltwin.models.notification;
 
-import com.koren.digitaltwin.analysis.MeasurementValueType;
+import com.koren.digitaltwin.analysis.enums.MeasurementValueType;
 import com.koren.digitaltwin.models.message.WifiMessage;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
