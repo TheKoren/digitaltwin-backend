@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  */
 @EqualsAndHashCode(callSuper = true)
 @Document(collection="events")
-@TypeAlias("threshold")
+@TypeAlias("crash")
 @Data
 @NoArgsConstructor
 public class CrashNotification extends AbstractNotification {
