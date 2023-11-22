@@ -72,7 +72,7 @@ public class BasicController {
             liveModel.setMonitorMessage((MonitorMessage) message);
         }
 
-        return ResponseEntity.ok("Data received successfully");
+        return ResponseEntity.ok("");
     }
 
     /**

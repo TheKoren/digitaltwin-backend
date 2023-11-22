@@ -1,5 +1,6 @@
 package com.koren.digitaltwin.models;
 
+import com.koren.digitaltwin.analysis.DropAnalyzer;
 import com.koren.digitaltwin.analysis.StabilityAnalyzer;
 import com.koren.digitaltwin.models.message.Message;
 import com.koren.digitaltwin.models.message.MonitorMessage;
@@ -30,6 +31,8 @@ public class LiveModel {
 
     @Autowired
     private StabilityAnalyzer stabilityAnalyzer;
+    @Autowired
+    private DropAnalyzer dropAnalyzer;
 
     @Getter
     @Setter
@@ -106,6 +109,7 @@ public class LiveModel {
         stabilityAnalyzer.detectCrashes(liveMessages);
         for (String mac : liveMessages.stream().map(WifiMessage::getMac).toList()) {
             stabilityAnalyzer.detectDelays(messagesForAnalysis.get(mac));
+            dropAnalyzer.detectDrops(messagesForAnalysis.get(mac));
         }
     }
 
