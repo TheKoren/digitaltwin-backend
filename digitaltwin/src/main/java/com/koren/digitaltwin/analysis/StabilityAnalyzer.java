@@ -23,7 +23,6 @@ public class StabilityAnalyzer {
     private static final long TIME_TRESHOLD = 2000;
     @Autowired
     private NotificationService notificationService;
-
     static List<Long> timeDifferences = new ArrayList<>();
     /**
      * Detect delays in the system based on the time differences between consecutive messages.

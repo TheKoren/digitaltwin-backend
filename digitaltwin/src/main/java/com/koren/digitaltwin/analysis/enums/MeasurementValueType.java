@@ -1,5 +1,8 @@
-package com.koren.digitaltwin.analysis;
+package com.koren.digitaltwin.analysis.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum MeasurementValueType {
     TEMPERATURE(11.11),
     HUMIDITY(10),
@@ -16,8 +19,5 @@ public enum MeasurementValueType {
         this.threshold = threshold;
     }
 
-    public double getThreshold() {
-        return threshold;
-    }
 }
 
