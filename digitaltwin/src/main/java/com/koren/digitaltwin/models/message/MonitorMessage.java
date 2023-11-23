@@ -10,6 +10,7 @@ import org.bson.types.ObjectId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Comparator;
 
 /**
  * Represents a monitor message that includes information about Wi-Fi networks.
@@ -31,11 +32,14 @@ public class MonitorMessage extends Message {
      */
     public MonitorMessage(ObjectId objectId, String mac, List<Map<String, Object>> networks) {
         super(objectId, mac);
+        List<WifiNetwork> networksList = new ArrayList<>();
         for (Map<String, Object> network : networks) {
             var newNetwork = new WifiNetwork(network.get("SSID").toString(),
                     Integer.parseInt(network.get("RSSI").toString()),
                     Integer.parseInt(network.get("Channel").toString()));
             networksList.add(newNetwork);
         }
+        networksList.sort(Comparator.comparingInt(WifiNetwork::getRssi).reversed());
+        this.networksList = networksList;
     }
 }

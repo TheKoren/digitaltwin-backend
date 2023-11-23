@@ -32,11 +32,13 @@ public class ClusterAnalyzer {
                 List<WifiMessage> newCluster = new ArrayList<>();
                 newCluster.add(message);
                 clusters.add(newCluster);
+                continue;
             }
             boolean foundCluster = false;
             for (List<WifiMessage> cluster : clusters) {
                 foundCluster = isSimilarToCluster(message, cluster);
                 if (foundCluster) {
+                    cluster.add(message);
                     break;
                 }
             }
@@ -80,8 +82,8 @@ public class ClusterAnalyzer {
      */
     private boolean isSimilarToCluster(WifiMessage currentMessage, List<WifiMessage> cluster) {
         for (WifiMessage messageFromCluster : cluster) {
-            if (Math.abs(currentMessage.getWifiData().getRssi()) - messageFromCluster.getWifiData().getRssi() <= 2 &&
-                    !(Math.abs(currentMessage.getSensorData().getTemperatureValue() - messageFromCluster.getSensorData().getTemperatureValue()) > 1) &&
+            if (Math.abs(Math.abs(currentMessage.getWifiData().getRssi()) - Math.abs(messageFromCluster.getWifiData().getRssi())) <= 2 &&
+                    !(Math.abs(currentMessage.getSensorData().getTemperatureValue() - messageFromCluster.getSensorData().getTemperatureValue()) > 3) &&
                     !(Math.abs(currentMessage.getSensorData().getSound() - messageFromCluster.getSensorData().getSound()) > 10)) {
                 return true;
             }
