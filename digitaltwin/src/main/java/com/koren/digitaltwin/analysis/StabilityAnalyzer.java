@@ -10,7 +10,7 @@ import com.koren.digitaltwin.services.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,10 +20,10 @@ import java.util.List;
  */
 @Component
 public class StabilityAnalyzer {
-    private static final long TIME_TRESHOLD = 2000;
+    private static final long TIME_THRESHOLD = 10000;
+    private static Instant lastDelayTimestamp = Instant.MIN;
     @Autowired
     private NotificationService notificationService;
-    static List<Long> timeDifferences = new ArrayList<>();
     /**
      * Detect delays in the system based on the time differences between consecutive messages.
      *
@@ -33,17 +33,40 @@ public class StabilityAnalyzer {
         if (messageList.size() < 2) {
             return;
         }
-        for (int i = 1; i < messageList.size(); i++) {
-            Message previousMessage = messageList.get(i);
+        for (int i = messageList.size() - 1; i >= 1; i--) {
             Message currentMessage = messageList.get(i - 1);
-
+            if (currentMessage.getTimestamp().isBefore(lastDelayTimestamp)) {
+                continue;
+            }
+            Message previousMessage = messageList.get(i);
             long timeDifference = currentMessage.getTimestamp().toEpochMilli() - previousMessage.getTimestamp().toEpochMilli();
-            timeDifferences.add(timeDifference);
+            if (timeDifference < TIME_THRESHOLD) {
+                notificationService.saveNotification(new ThresholdNotification(NotificationType.WARNING, "Device (" + messageList.get(0).getMac() + ") above delay threshold: " + timeDifference));
+                lastDelayTimestamp = currentMessage.getTimestamp();
+            }
         }
-        var avg = calculateStatistics(timeDifferences);
-        for (Long epoch : timeDifferences) {
-            if (!(epoch > (avg - TIME_TRESHOLD) && epoch < (avg + TIME_TRESHOLD))) {
-                notificationService.saveNotification(new ThresholdNotification(NotificationType.WARNING, "Device (" + messageList.get(0).getMac() + ") above delay threshold: " + epoch));
+    }
+
+    /**
+     * Detect crashes in the system by identifying nodes with missing model addresses.
+     *
+     * @param liveMessages The list of live WifiMessages to analyze for crashes.
+     */
+    public void detectCrashes(List<WifiMessage> liveMessages) {
+        var apNodes = liveMessages
+                .stream()
+                .filter(it -> it.getWifiData().mode == WifiMode.AP_STA)
+                .toList();
+        for (WifiMessage node : apNodes) {
+            var addressList = node.getWifiData().addressList;
+            var modelAddressList = liveMessages
+                    .stream()
+                    .map(WifiMessage::getMac)
+                    .toList();
+            for (String address : addressList) {
+                if (!modelAddressList.contains(address)) {
+                    notificationService.saveNotification(new CrashNotification(NotificationType.ERROR, "Possible crash on device: " + address));
+                }
             }
         }
     }
@@ -54,6 +77,7 @@ public class StabilityAnalyzer {
      * @param timeDifferences The list of time differences to calculate statistics.
      * @return The average of time differences.
      */
+    @SuppressWarnings("unused")
     private static long calculateStatistics(List<Long> timeDifferences) {
         if (timeDifferences.isEmpty()) {
             // We shouldn't be here at this point but who knows what goes wrong :-D
@@ -79,29 +103,5 @@ public class StabilityAnalyzer {
         System.out.println("Highest time difference: " + highest + " milliseconds");
         System.out.println("Median time difference: " + median + " milliseconds");
         return average;
-    }
-
-    /**
-     * Detect crashes in the system by identifying nodes with missing model addresses.
-     *
-     * @param liveMessages The list of live WifiMessages to analyze for crashes.
-     */
-    public void detectCrashes(List<WifiMessage> liveMessages) {
-        var apNodes = liveMessages
-                .stream()
-                .filter(it -> it.getWifiData().mode == WifiMode.AP_STA)
-                .toList();
-        for (WifiMessage node : apNodes) {
-            var addressList = node.getWifiData().addressList;
-            var modelAddressList = liveMessages
-                    .stream()
-                    .map(WifiMessage::getMac)
-                    .toList();
-            for (String address : addressList) {
-                if (!modelAddressList.contains(address)) {
-                    notificationService.saveNotification(new CrashNotification(NotificationType.ERROR, "Possible crash on device: " + address));
-                }
-            }
-        }
     }
 }

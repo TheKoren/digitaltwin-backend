@@ -1,13 +1,12 @@
 package com.koren.digitaltwin.models;
 
+import com.koren.digitaltwin.analysis.ClusterAnalyzer;
 import com.koren.digitaltwin.analysis.DropAnalyzer;
 import com.koren.digitaltwin.analysis.StabilityAnalyzer;
-import com.koren.digitaltwin.models.message.Message;
 import com.koren.digitaltwin.models.message.MonitorMessage;
-import com.koren.digitaltwin.models.notification.NotificationType;
-import com.koren.digitaltwin.models.notification.ModelChangeNotification;
 import com.koren.digitaltwin.models.message.WifiMessage;
-import com.koren.digitaltwin.repositories.DataRepository;
+import com.koren.digitaltwin.models.notification.ModelChangeNotification;
+import com.koren.digitaltwin.models.notification.NotificationType;
 import com.koren.digitaltwin.services.DataService;
 import com.koren.digitaltwin.services.NotificationService;
 import lombok.Getter;
@@ -33,6 +32,8 @@ public class LiveModel {
     private StabilityAnalyzer stabilityAnalyzer;
     @Autowired
     private DropAnalyzer dropAnalyzer;
+    @Autowired
+    private ClusterAnalyzer clusterAnalyzer;
 
     @Getter
     @Setter
@@ -107,10 +108,20 @@ public class LiveModel {
         }
         // If node is in the model, conduct analysis
         stabilityAnalyzer.detectCrashes(liveMessages);
+        clusterAnalyzer.detectClusters(liveMessages);
         for (String mac : liveMessages.stream().map(WifiMessage::getMac).toList()) {
             stabilityAnalyzer.detectDelays(messagesForAnalysis.get(mac));
             dropAnalyzer.detectDrops(messagesForAnalysis.get(mac));
         }
+    }
+
+    /**
+     * Retrieves the current cluster information from the livemodel
+     *
+     * @return List containing list of MAC addresses to depict the cluster hierarchy.
+     */
+    public List<List<String>> getClusters() {
+        return clusterAnalyzer.getInternalCache();
     }
 
 }

@@ -1,6 +1,6 @@
 package com.koren.digitaltwin.controllers;
 
-import com.koren.digitaltwin.models.notification.Notification;
+import com.koren.digitaltwin.models.notification.*;
 import com.koren.digitaltwin.services.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,11 +36,51 @@ public class NotificationController {
      *
      * @return ResponseEntity containing the list of all notifications.
      */
+
     @GetMapping
     public ResponseEntity<List<Notification>> getAllNotifications() {
         return new ResponseEntity<>(notificationService.allNotification(), HttpStatus.OK);
     }
 
+    /**
+     * Retrieves all {@link CrashNotification} from the repository.
+     *
+     * @return List of all {@link CrashNotification} objects.
+     */
+    @GetMapping("/crash")
+    public ResponseEntity<List<Notification>> getAllCrashNotifications() {
+        return new ResponseEntity<>(notificationService.getCrashNotifications(), HttpStatus.OK);
+    }
+
+    /**
+     * Retrieves all {@link ModelChangeNotification} from the repository.
+     *
+     * @return List of all {@link ModelChangeNotification} objects.
+     */
+    @GetMapping("/modelchange")
+    public ResponseEntity<List<Notification>> getAllModelChangeNotifications() {
+        return new ResponseEntity<>(notificationService.getModelChangeNotifications(), HttpStatus.OK);
+    }
+
+    /**
+     * Retrieves all {@link DropNotification} from the repository.
+     *
+     * @return List of all {@link DropNotification} objects.
+     */
+    @GetMapping("/drop")
+    public ResponseEntity<List<Notification>> getAllDropNotifications() {
+        return new ResponseEntity<>(notificationService.getDropNotifications(), HttpStatus.OK);
+    }
+
+    /**
+     * Retrieves all {@link ThresholdNotification} from the repository.
+     *
+     * @return List of all {@link ThresholdNotification} objects.
+     */
+    @GetMapping("threshold")
+    public ResponseEntity<List<Notification>> getAllThresholdNotifications() {
+        return new ResponseEntity<>(notificationService.getThresholdNotifications(), HttpStatus.OK);
+    }
     /**
      * Deletes a notification based on its unique key.
      *
