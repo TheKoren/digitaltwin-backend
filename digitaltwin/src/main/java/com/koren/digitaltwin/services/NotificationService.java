@@ -1,7 +1,6 @@
 package com.koren.digitaltwin.services;
 
-import com.koren.digitaltwin.models.notification.Notification;
-import com.koren.digitaltwin.models.notification.ModelChangeNotification;
+import com.koren.digitaltwin.models.notification.*;
 import com.koren.digitaltwin.repositories.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +33,57 @@ public class NotificationService {
         notificationRepository.save(notification);
     }
 
+    /**
+     * Retrieves all {@link DropNotification} from the repository.
+     *
+     * @return List of all {@link DropNotification} objects.
+     */
+    public List<Notification> getDropNotifications() {
+        return notificationRepository
+                .findAll()
+                .stream()
+                .filter(it -> it instanceof DropNotification)
+                .toList();
+    }
+
+    /**
+     * Retrieves all {@link ThresholdNotification} from the repository.
+     *
+     * @return List of all {@link ThresholdNotification} objects.
+     */
+    public List<Notification> getThresholdNotifications() {
+        return notificationRepository
+                .findAll()
+                .stream()
+                .filter(it -> it instanceof ThresholdNotification)
+                .toList();
+    }
+
+    /**
+     * Retrieves all {@link ModelChangeNotification} from the repository.
+     *
+     * @return List of all {@link ModelChangeNotification} objects.
+     */
+    public List<Notification> getModelChangeNotifications() {
+        return notificationRepository
+                .findAll()
+                .stream()
+                .filter(it -> it instanceof ModelChangeNotification)
+                .toList();
+    }
+
+    /**
+     * Retrieves all {@link CrashNotification} from the repository.
+     *
+     * @return List of all {@link CrashNotification} objects.
+     */
+    public List<Notification> getCrashNotifications() {
+        return notificationRepository
+                .findAll()
+                .stream()
+                .filter(it -> it instanceof CrashNotification)
+                .toList();
+    }
     /**
      * Deletes a notification from the repository based on its unique key.
      *

@@ -48,7 +48,7 @@ public class DataController {
      */
     @GetMapping
     public ResponseEntity<List<WifiMessage>> getAllData() {
-        return new ResponseEntity<List<WifiMessage>>(dataService.allData(), HttpStatus.OK);
+        return new ResponseEntity<>(dataService.allData(), HttpStatus.OK);
     }
 
     /**
@@ -59,7 +59,7 @@ public class DataController {
      */
     @GetMapping("/{mac}")
     public ResponseEntity<Optional<WifiMessage>> getLatestData(@PathVariable String mac) {
-        return new ResponseEntity<Optional<WifiMessage>>(dataService.latestData(mac), HttpStatus.OK);
+        return new ResponseEntity<>(dataService.latestData(mac), HttpStatus.OK);
     }
 
     /**
@@ -69,7 +69,7 @@ public class DataController {
      */
     @GetMapping("/live")
     public ResponseEntity<Optional<List<WifiMessage>>> getLiveModel() {
-        return new ResponseEntity<Optional<List<WifiMessage>>>(liveModel.getLiveMessages(), HttpStatus.OK);
+        return new ResponseEntity<>(liveModel.getLiveMessages(), HttpStatus.OK);
     }
 
     /**
@@ -83,13 +83,23 @@ public class DataController {
     }
 
     /**
+     * Retrieves cluster information associated with the live model.
+     *
+     * @return ResponseEntity containing the MonitorMessage.
+     */
+    @GetMapping("/cluster")
+    public ResponseEntity<List<List<String>>> getClusterInformation() {
+        return new ResponseEntity<>(liveModel.getClusters(), HttpStatus.OK);
+    }
+
+    /**
      * Retrieves the set of all MAC addresses in the data.
      *
      * @return ResponseEntity containing the set of all MAC addresses.
      */
     @GetMapping("/all/macs")
     public ResponseEntity<Set<String>> getAllMacs() {
-        return new ResponseEntity<Set<String>>(dataService.allMacs(), HttpStatus.OK);
+        return new ResponseEntity<>(dataService.allMacs(), HttpStatus.OK);
     }
 
     /**
@@ -100,7 +110,7 @@ public class DataController {
      */
     @GetMapping("/all/{mac}")
     public ResponseEntity<List<Message>> getWifiMessageByMac(@PathVariable String mac) {
-        return new ResponseEntity<List<Message>>(dataService.wifiMessageByMac(mac), HttpStatus.OK);
+        return new ResponseEntity<>(dataService.wifiMessageByMac(mac), HttpStatus.OK);
     }
 
     /**
@@ -112,7 +122,7 @@ public class DataController {
      */
     @GetMapping("/all/{mac}/{num}")
     public ResponseEntity<List<Message>> getWifiMessageByMacAndNumber(@PathVariable String mac, @PathVariable int num) {
-        return new ResponseEntity<List<Message>>(dataService.wifiMessageByMacAndNumber(mac, num), HttpStatus.OK);
+        return new ResponseEntity<>(dataService.wifiMessageByMacAndNumber(mac, num), HttpStatus.OK);
     }
 
     /**
@@ -122,6 +132,6 @@ public class DataController {
      */
     @GetMapping("/test/del")
     public ResponseEntity<String> deleteAll() {
-        return new ResponseEntity<String>(dataService.deleteAll(), HttpStatus.OK);
+        return new ResponseEntity<>(dataService.deleteAll(), HttpStatus.OK);
     }
 }
