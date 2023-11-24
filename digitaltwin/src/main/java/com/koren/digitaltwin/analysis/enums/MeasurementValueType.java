@@ -7,11 +7,11 @@ public enum MeasurementValueType {
     TEMPERATURE(11.11),
     HUMIDITY(10),
     PRESSURE(1),
-    TVOC(10),
+    TVOC(150),
     SOUND(10),
-    LIGHT(10),
-    UV(10),
-    ECO2(10);
+    LIGHT(150),
+    UV(2),
+    ECO2(150);
 
     private final double threshold;
 

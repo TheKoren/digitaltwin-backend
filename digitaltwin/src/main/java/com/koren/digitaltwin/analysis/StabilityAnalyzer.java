@@ -6,6 +6,7 @@ import com.koren.digitaltwin.models.message.WifiMessage;
 import com.koren.digitaltwin.models.notification.CrashNotification;
 import com.koren.digitaltwin.models.notification.NotificationType;
 import com.koren.digitaltwin.models.notification.ThresholdNotification;
+import com.koren.digitaltwin.services.DataService;
 import com.koren.digitaltwin.services.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,10 +21,12 @@ import java.util.List;
  */
 @Component
 public class StabilityAnalyzer {
-    private static final long TIME_THRESHOLD = 10000;
+    private static final long TIME_THRESHOLD = 12000;
     private static Instant lastDelayTimestamp = Instant.MIN;
     @Autowired
     private NotificationService notificationService;
+    @Autowired
+    private DataService dataService;
     /**
      * Detect delays in the system based on the time differences between consecutive messages.
      *
@@ -34,14 +37,14 @@ public class StabilityAnalyzer {
             return;
         }
         for (int i = messageList.size() - 1; i >= 1; i--) {
-            Message currentMessage = messageList.get(i - 1);
+            WifiMessage currentMessage = messageList.get(i - 1);
             if (currentMessage.getTimestamp().isBefore(lastDelayTimestamp)) {
                 continue;
             }
-            Message previousMessage = messageList.get(i);
+            WifiMessage previousMessage = messageList.get(i);
             long timeDifference = currentMessage.getTimestamp().toEpochMilli() - previousMessage.getTimestamp().toEpochMilli();
-            if (timeDifference < TIME_THRESHOLD) {
-                notificationService.saveNotification(new ThresholdNotification(NotificationType.WARNING, "Device (" + messageList.get(0).getMac() + ") above delay threshold: " + timeDifference));
+            if (timeDifference > TIME_THRESHOLD) {
+                notificationService.saveNotification(new ThresholdNotification(NotificationType.WARNING, "Device (" + messageList.get(0).getMac() + ") above delay threshold.", currentMessage, timeDifference));
                 lastDelayTimestamp = currentMessage.getTimestamp();
             }
         }
@@ -65,8 +68,14 @@ public class StabilityAnalyzer {
                     .toList();
             for (String address : addressList) {
                 if (!modelAddressList.contains(address)) {
-                    notificationService.saveNotification(new CrashNotification(NotificationType.ERROR, "Possible crash on device: " + address));
+                    var latestData = dataService.latestData(address).get();
+                    notificationService.saveNotification(new CrashNotification(NotificationType.ERROR, "Possible crash on device." + address, (WifiMessage) latestData, node));
                 }
+            }
+        }
+        if (apNodes.isEmpty() && !liveMessages.isEmpty()) {
+            for (WifiMessage msg : liveMessages) {
+                notificationService.saveNotification(new CrashNotification(NotificationType.ERROR, "AP unable to send data, but end device still available", msg, null));
             }
         }
     }
