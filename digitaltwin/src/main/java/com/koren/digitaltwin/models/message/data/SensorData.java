@@ -1,5 +1,6 @@
 package com.koren.digitaltwin.models.message.data;
 
+import com.koren.digitaltwin.utils.InvalidMeasurementValueException;
 import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -48,15 +49,40 @@ public class SensorData {
      * @param sensorValues The map containing sensor values.
      */
     public SensorData(Map<String, Object> sensorValues) {
-        this.temperatureValue = Double.parseDouble(sensorValues.get("temp").toString()) / 1000;
-        this.humidityValue = Double.parseDouble(sensorValues.get("hum").toString()) / 1000;
-        this.pressure = Double.parseDouble(sensorValues.get("press").toString()) / 10000;
-        this.tvocValue = Integer.parseInt(sensorValues.get("tvoc").toString());
-        this.sound = Double.parseDouble(sensorValues.get("sound").toString()) / 100;
-        this.light = Double.parseDouble(sensorValues.get("light").toString()) / 10;
-        this.uv = Integer.parseInt(sensorValues.get("uv").toString());
-        this.eco2 = Long.parseLong(sensorValues.get("eco2").toString());
+        this.temperatureValue = validateNonZeroDouble(sensorValues, "temp") / 1000;
+        this.humidityValue = validateNonZeroDouble(sensorValues, "hum") / 1000;
+        this.pressure = validateNonZeroDouble(sensorValues, "press") / 10000;
+        this.tvocValue = validateNonZeroInteger(sensorValues, "tvoc");
+        this.sound = validateNonZeroDouble(sensorValues, "sound") / 100;
+        this.light = validateNonZeroDouble(sensorValues, "light") / 10;
+        this.uv = Integer.parseInt(sensorValues.get("uv").toString()); // UV not validated
+        this.eco2 = validateNonZeroLong(sensorValues, "eco2");
     }
+
+    private double validateNonZeroDouble(Map<String, Object> sensorValues, String key) {
+        double value = Double.parseDouble(sensorValues.get(key).toString());
+        if (value == 0) {
+            throw new InvalidMeasurementValueException("Invalid " + key + " value: " + value);
+        }
+        return value;
+    }
+
+    private int validateNonZeroInteger(Map<String, Object> sensorValues, String key) {
+        int value = Integer.parseInt(sensorValues.get(key).toString());
+        if (value == 0) {
+            throw new InvalidMeasurementValueException("Invalid " + key + " value: " + value);
+        }
+        return value;
+    }
+
+    private long validateNonZeroLong(Map<String, Object> sensorValues, String key) {
+        long value = Long.parseLong(sensorValues.get(key).toString());
+        if (value == 0) {
+            throw new InvalidMeasurementValueException("Invalid " + key + " value: " + value);
+        }
+        return value;
+    }
+
 
     /**
      * Constructs a SensorData instance with specified values.

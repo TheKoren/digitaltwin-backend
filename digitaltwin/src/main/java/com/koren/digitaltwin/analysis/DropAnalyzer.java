@@ -78,7 +78,7 @@ public class DropAnalyzer {
             double percentageDifference = (valueDifference / getValue(currentMessage, measurementValueType)) * 100;
 
             if (percentageDifference > measurementValueType.getThreshold()) {
-                notificationService.saveNotification(new DropNotification(NotificationType.ANALYSIS, "Signifact measurement drop detected. ", currentMessage, measurementValueType));
+                notificationService.saveNotification(new DropNotification(NotificationType.ANALYSIS, "Signifact measurement drop detected. ", currentMessage, measurementValueType, previousMessage.getFromType(measurementValueType), currentMessage.getFromType(measurementValueType)));
                 long timestamp = currentMessage.getTimestamp().toEpochMilli();
                 internalCache.get(mac).put(measurementValueType, timestamp);
             }

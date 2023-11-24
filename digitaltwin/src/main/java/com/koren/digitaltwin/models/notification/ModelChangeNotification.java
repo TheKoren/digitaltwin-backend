@@ -19,8 +19,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @Data
 @NoArgsConstructor
 public class ModelChangeNotification extends AbstractNotification {
-    @Field
-    WifiMessage parent;
     /**
      * Constructs a ModelChangeNotification with the specified type, message, and parent WifiMessage.
      *
@@ -29,7 +27,6 @@ public class ModelChangeNotification extends AbstractNotification {
      * @param parent  The parent WifiMessage associated with the model change.
      */
     public ModelChangeNotification(NotificationType type, String message, WifiMessage parent) {
-        super(type, message);
-        this.parent = parent;
+        super(type, message, parent);
     }
 }

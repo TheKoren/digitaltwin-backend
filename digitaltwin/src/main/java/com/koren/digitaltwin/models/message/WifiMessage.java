@@ -1,5 +1,6 @@
 package com.koren.digitaltwin.models.message;
 
+import com.koren.digitaltwin.analysis.enums.MeasurementValueType;
 import com.koren.digitaltwin.models.message.data.SensorData;
 import com.koren.digitaltwin.models.message.data.WifiData;
 import lombok.AllArgsConstructor;
@@ -47,4 +48,16 @@ public class WifiMessage extends Message{
         this.wifiData = wifiData;
     }
 
+    public Number getFromType(MeasurementValueType measurementValueType) {
+        return switch(measurementValueType) {
+            case TEMPERATURE -> getSensorData().getTemperatureValue();
+            case UV -> getSensorData().getUv();
+            case TVOC -> getSensorData().getTvocValue();
+            case LIGHT -> getSensorData().getLight();
+            case SOUND -> getSensorData().getSound();
+            case HUMIDITY -> getSensorData().getHumidityValue();
+            case PRESSURE -> getSensorData().getPressure();
+            case ECO2 -> getSensorData().getEco2();
+        };
+    }
 }

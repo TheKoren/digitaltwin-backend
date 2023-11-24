@@ -37,9 +37,14 @@ public class NotificationController {
      * @return ResponseEntity containing the list of all notifications.
      */
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<Notification>> getAllNotifications() {
         return new ResponseEntity<>(notificationService.allNotification(), HttpStatus.OK);
+    }
+
+    @GetMapping("/all/{mac}")
+    public ResponseEntity<List<NotificationType>> getAllNotificationTypesForMac(@PathVariable String mac) {
+        return new ResponseEntity<>(notificationService.allNotificationTypesForMac(mac), HttpStatus.OK);
     }
 
     /**
@@ -53,6 +58,16 @@ public class NotificationController {
     }
 
     /**
+     * Retrieves {@link CrashNotification} from the repository.
+     *
+     * @return List of all {@link CrashNotification} objects.
+     */
+    @GetMapping("/crash/{mac}")
+    public ResponseEntity<List<Notification>> getAllCrashNotificationsWithMac(@PathVariable String mac) {
+        return new ResponseEntity<>(notificationService.getCrashNotificationsWithMac(mac), HttpStatus.OK);
+    }
+
+    /**
      * Retrieves all {@link ModelChangeNotification} from the repository.
      *
      * @return List of all {@link ModelChangeNotification} objects.
@@ -60,6 +75,16 @@ public class NotificationController {
     @GetMapping("/modelchange")
     public ResponseEntity<List<Notification>> getAllModelChangeNotifications() {
         return new ResponseEntity<>(notificationService.getModelChangeNotifications(), HttpStatus.OK);
+    }
+
+    /**
+     * Retrieves {@link ModelChangeNotification} from the repository.
+     *
+     * @return List of all {@link ModelChangeNotification} objects.
+     */
+    @GetMapping("/modelchange/{mac}")
+    public ResponseEntity<List<Notification>> getAllModelChangeNotificationsWithMac(@PathVariable String mac) {
+        return new ResponseEntity<>(notificationService.getModelChangeNotificationsWithMac(mac), HttpStatus.OK);
     }
 
     /**
@@ -73,6 +98,16 @@ public class NotificationController {
     }
 
     /**
+     * Retrieves {@link DropNotification} from the repository.
+     *
+     * @return List of all {@link DropNotification} objects.
+     */
+    @GetMapping("/drop/{mac}")
+    public ResponseEntity<List<Notification>> getAllDropNotificationsWithMac(@PathVariable String mac) {
+        return new ResponseEntity<>(notificationService.getDropNotificationsWithMac(mac), HttpStatus.OK);
+    }
+
+    /**
      * Retrieves all {@link ThresholdNotification} from the repository.
      *
      * @return List of all {@link ThresholdNotification} objects.
@@ -80,6 +115,16 @@ public class NotificationController {
     @GetMapping("threshold")
     public ResponseEntity<List<Notification>> getAllThresholdNotifications() {
         return new ResponseEntity<>(notificationService.getThresholdNotifications(), HttpStatus.OK);
+    }
+
+    /**
+     * Retrieves {@link ThresholdNotification} from the repository.
+     *
+     * @return List of all {@link ThresholdNotification} objects.
+     */
+    @GetMapping("threshold/{mac}")
+    public ResponseEntity<List<Notification>> getAllThresholdNotificationsWithMac(@PathVariable String mac) {
+        return new ResponseEntity<>(notificationService.getThresholdNotificationsWithMac(mac), HttpStatus.OK);
     }
     /**
      * Deletes a notification based on its unique key.

@@ -91,9 +91,54 @@ public class NotificationService {
      */
     public void deleteNotification(String uniqueKey) {
         var notification = notificationRepository.findAll().stream()
-                .filter(n -> n instanceof ModelChangeNotification)
-                .filter(n -> ((ModelChangeNotification) n).getUniqueKey().equals(uniqueKey.replaceAll(".$", "")))
+                .filter(n -> n.getUniqueKey().equals(uniqueKey.replaceAll(".$", "")))
                 .findFirst().get();
         notificationRepository.deleteById(notification.getId());
+    }
+
+    public List<Notification> getCrashNotificationsWithMac(String mac) {
+        return notificationRepository
+                .findAll()
+                .stream()
+                .filter(it -> it instanceof CrashNotification)
+                .filter (it -> ((CrashNotification) it).getParent().getMac().equals(mac))
+                .toList();
+    }
+
+    public List<Notification> getDropNotificationsWithMac(String mac) {
+        return notificationRepository
+                .findAll()
+                .stream()
+                .filter(it -> it instanceof DropNotification)
+                .filter (it -> ((DropNotification) it).getParent().getMac().equals(mac))
+                .toList();
+    }
+
+    public List<Notification> getModelChangeNotificationsWithMac(String mac) {
+        return notificationRepository
+                .findAll()
+                .stream()
+                .filter(it -> it instanceof ModelChangeNotification)
+                .filter (it -> ((ModelChangeNotification) it).getParent().getMac().equals(mac))
+                .toList();
+    }
+
+    public List<Notification> getThresholdNotificationsWithMac(String mac) {
+        return notificationRepository
+                .findAll()
+                .stream()
+                .filter(it -> it instanceof ThresholdNotification)
+                .filter (it -> ((ThresholdNotification) it).getParent().getMac().equals(mac))
+                .toList();
+    }
+
+    public List<NotificationType> allNotificationTypesForMac(String mac) {
+        return notificationRepository
+                .findAll()
+                .stream()
+                .filter(it -> it instanceof AbstractNotification)
+                .filter(it -> ((AbstractNotification) it).getParent().getMac().equals(mac))
+                .map(Notification::getType)
+                .toList();
     }
 }

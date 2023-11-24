@@ -35,8 +35,8 @@ public class DataService {
      * @param mac MAC address of the Wi-Fi message.
      * @return Optional containing the latest Wi-Fi message if found, otherwise an empty optional.
      */
-    public Optional<WifiMessage> latestData(String mac) {
-        return dataRepository.findMessageByMac(mac).stream().max(Comparator.comparingLong(message -> message.timestamp.toEpochMilli()));
+    public Optional<Message> latestData(String mac) {
+        return dataRepository.findMessagesByMac(mac).stream().max(Comparator.comparingLong(message -> message.timestamp.toEpochMilli()));
     }
 
     /**

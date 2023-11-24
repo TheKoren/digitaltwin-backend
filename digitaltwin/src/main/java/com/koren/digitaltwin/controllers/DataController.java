@@ -58,7 +58,7 @@ public class DataController {
      * @return ResponseEntity containing the optional latest Wifi message.
      */
     @GetMapping("/{mac}")
-    public ResponseEntity<Optional<WifiMessage>> getLatestData(@PathVariable String mac) {
+    public ResponseEntity<Optional<Message>> getLatestData(@PathVariable String mac) {
         return new ResponseEntity<>(dataService.latestData(mac), HttpStatus.OK);
     }
 
