@@ -10,7 +10,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
 @EnableScheduling
-@ComponentScan
 public class Application {
 
 	public static void main(String[] args) {
@@ -27,7 +26,6 @@ public class Application {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				// Allow requests from http://localhost:3000
 				registry.addMapping("/**").allowedOrigins("http://localhost:3000");
 			}
 		};

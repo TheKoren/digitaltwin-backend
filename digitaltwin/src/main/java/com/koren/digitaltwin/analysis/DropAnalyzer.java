@@ -1,7 +1,7 @@
 package com.koren.digitaltwin.analysis;
 
 import com.koren.digitaltwin.analysis.enums.MeasurementValueType;
-import com.koren.digitaltwin.models.message.WifiMessage;
+import com.koren.digitaltwin.models.message.NodeWifiMessage;
 import com.koren.digitaltwin.models.notification.DropNotification;
 import com.koren.digitaltwin.models.notification.NotificationType;
 import com.koren.digitaltwin.services.NotificationService;
@@ -29,7 +29,7 @@ public class DropAnalyzer {
      *
      * @param messageList List of WifiMessages for analysis.
      */
-    public void detectDrops(List<WifiMessage> messageList) {
+    public void detectDrops(List<NodeWifiMessage> messageList) {
         if (!internalCache.containsKey(messageList.get(0).getMac())) {
             initInternalCache(messageList.get(0).getMac());
         }
@@ -62,17 +62,17 @@ public class DropAnalyzer {
      * @param messageList          List of WifiMessages for analysis.
      * @param measurementValueType Measurement value type for analysis.
      */
-    private void detectMeasurementDrop(List<WifiMessage> messageList, MeasurementValueType measurementValueType) {
+    private void detectMeasurementDrop(List<NodeWifiMessage> messageList, MeasurementValueType measurementValueType) {
         if (messageList.size() < 2) {
             return;
         }
         String mac = messageList.get(0).getMac();
         for (int i = messageList.size() - 1; i >= 1; i--) {
-            WifiMessage currentMessage = messageList.get(i - 1);
+            NodeWifiMessage currentMessage = messageList.get(i - 1);
             if (currentMessage.getTimestamp().toEpochMilli() < internalCache.get(mac).get(measurementValueType)) {
                 continue;
             }
-            WifiMessage previousMessage = messageList.get(i);
+            NodeWifiMessage previousMessage = messageList.get(i);
 
             double valueDifference = getValueDifference(currentMessage, previousMessage, measurementValueType);
             double percentageDifference = (valueDifference / getValue(currentMessage, measurementValueType)) * 100;
@@ -93,7 +93,7 @@ public class DropAnalyzer {
      * @param valueType       Measurement value type.
      * @return The absolute difference in the measurement value.
      */
-    private double getValueDifference(WifiMessage currentMessage, WifiMessage previousMessage, MeasurementValueType valueType) {
+    private double getValueDifference(NodeWifiMessage currentMessage, NodeWifiMessage previousMessage, MeasurementValueType valueType) {
         return switch (valueType) {
             case TEMPERATURE ->
                     Math.abs(currentMessage.getSensorData().getTemperatureValue() - previousMessage.getSensorData().getTemperatureValue());
@@ -121,7 +121,7 @@ public class DropAnalyzer {
      * @param valueType Measurement value type.
      * @return The value of the measurement type.
      */
-    private double getValue(WifiMessage message, MeasurementValueType valueType) {
+    private double getValue(NodeWifiMessage message, MeasurementValueType valueType) {
         return switch (valueType) {
             case TEMPERATURE -> message.getSensorData().getTemperatureValue();
             case TVOC -> message.getSensorData().getTvocValue();

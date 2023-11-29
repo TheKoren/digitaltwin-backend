@@ -1,4 +1,4 @@
-package com.koren.digitaltwin.models.message.data;
+package com.koren.digitaltwin.models.message.data.wifi;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

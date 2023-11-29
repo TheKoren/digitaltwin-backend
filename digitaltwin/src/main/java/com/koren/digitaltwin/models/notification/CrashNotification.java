@@ -1,6 +1,6 @@
 package com.koren.digitaltwin.models.notification;
 
-import com.koren.digitaltwin.models.message.WifiMessage;
+import com.koren.digitaltwin.models.message.NodeWifiMessage;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -20,14 +20,14 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @NoArgsConstructor
 public class CrashNotification extends AbstractNotification {
     @Field
-    WifiMessage apNode;
+    NodeWifiMessage apNode;
     /**
      * Constructs a CrashNotification with the specified type and message.
      *
      * @param type    The type of the notification.
      * @param message The message associated with the notification.
      */
-    public CrashNotification(NotificationType type, String message, WifiMessage parent, WifiMessage apNode) {
+    public CrashNotification(NotificationType type, String message, NodeWifiMessage parent, NodeWifiMessage apNode) {
         super(type, message, parent);
         this.apNode = apNode;
     }

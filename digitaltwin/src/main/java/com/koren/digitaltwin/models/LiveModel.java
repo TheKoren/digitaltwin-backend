@@ -3,14 +3,16 @@ package com.koren.digitaltwin.models;
 import com.koren.digitaltwin.analysis.ClusterAnalyzer;
 import com.koren.digitaltwin.analysis.DropAnalyzer;
 import com.koren.digitaltwin.analysis.StabilityAnalyzer;
-import com.koren.digitaltwin.models.message.MonitorMessage;
-import com.koren.digitaltwin.models.message.WifiMessage;
+import com.koren.digitaltwin.models.message.MonitorWifiMessage;
+import com.koren.digitaltwin.models.message.NodeWifiMessage;
 import com.koren.digitaltwin.models.notification.ModelChangeNotification;
 import com.koren.digitaltwin.models.notification.NotificationType;
 import com.koren.digitaltwin.services.DataService;
 import com.koren.digitaltwin.services.NotificationService;
 import lombok.Getter;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -24,9 +26,12 @@ import java.util.*;
  */
 @Component
 public class LiveModel {
-    private List<WifiMessage> liveMessages = new ArrayList<>();
+    private static final Logger logger = LoggerFactory.getLogger(LiveModel.class);
+    private static final int MAX_MESSAGES_PER_MAC = 20;
+    private static final long INACTIVE_NODE_THRESHOLD_HOURS = 2;
+    private List<NodeWifiMessage> liveMessages = new ArrayList<>();
     @Getter
-    private Map<String, List<WifiMessage>> messagesForAnalysis = new HashMap<>();
+    private Map<String, List<NodeWifiMessage>> messagesForAnalysis = new HashMap<>();
 
     @Autowired
     private StabilityAnalyzer stabilityAnalyzer;
@@ -37,7 +42,7 @@ public class LiveModel {
 
     @Getter
     @Setter
-    private MonitorMessage monitorMessage;
+    private MonitorWifiMessage monitorMessage;
     @Autowired
     private NotificationService notificationService;
 
@@ -49,7 +54,7 @@ public class LiveModel {
      *
      * @return Optional containing the list of live Wifi messages.
      */
-    public Optional<List<WifiMessage>> getLiveMessages() {
+    public Optional<List<NodeWifiMessage>> getLiveMessages() {
         return Optional.of(liveMessages);
     }
 
@@ -58,23 +63,29 @@ public class LiveModel {
      *
      * @param message The Wifi message to be added or updated.
      */
-    public void updateLiveMessage(WifiMessage message) {
-        boolean found = false;
+    public void updateLiveMessage(NodeWifiMessage message) {
+        updateMessagesForAnalysis(message);
+        updateLiveMessagesList(message);
+    }
+
+    private void updateMessagesForAnalysis(NodeWifiMessage message) {
         String mac = message.getMac();
-        if (messagesForAnalysis.containsKey(mac)) {
-            List<WifiMessage> macMessages = messagesForAnalysis.get(mac);
-            if (macMessages.size() == 20) {
-                macMessages.remove(macMessages.size() - 1);
-            }
-            macMessages.add(0, message);
-        } else {
-            List<WifiMessage> newMacMessages = new LinkedList<>();
-            newMacMessages.add(message);
-            messagesForAnalysis.put(mac, newMacMessages);
+        List<NodeWifiMessage> macMessages = messagesForAnalysis.computeIfAbsent(mac, k -> new LinkedList<>());
+
+        if (macMessages.size() == MAX_MESSAGES_PER_MAC) {
+            macMessages.remove(macMessages.size() - 1);
         }
-        for (WifiMessage existingMessage : liveMessages) {
-            if(existingMessage.getMac().equals(message.getMac())) {
-                liveMessages.remove(existingMessage);
+        macMessages.add(0, message);
+    }
+
+    private void updateLiveMessagesList(NodeWifiMessage message) {
+        Iterator<NodeWifiMessage> iterator = liveMessages.iterator();
+        boolean found = false;
+
+        while (iterator.hasNext()) {
+            NodeWifiMessage existingMessage = iterator.next();
+            if (existingMessage.getMac().equals(message.getMac())) {
+                iterator.remove();
                 found = true;
                 break;
             }
@@ -83,9 +94,9 @@ public class LiveModel {
         liveMessages.add(message);
 
         if (found) {
-            System.out.println("Updated existing message for MAC: " + message.getMac());
+            logger.info("Updated existing message for MAC: {}", message.getMac());
         } else {
-            System.out.println("Added new message for MAC: " + message.getMac());
+            logger.info("Added new message for MAC: {}", message.getMac());
         }
     }
 
@@ -95,32 +106,45 @@ public class LiveModel {
     @Scheduled(fixedRate = 60000)
     public void checkNetworkNodes() {
         Instant currentTime = Instant.now();
-        Iterator<WifiMessage> iterator = liveMessages.iterator();
+        Iterator<NodeWifiMessage> iterator = liveMessages.iterator();
 
         while(iterator.hasNext()) {
-            WifiMessage message = iterator.next();
+            NodeWifiMessage message = iterator.next();
             Instant messageTime = message.getTimestamp();
 
-            if (messageTime.isBefore(currentTime.plus(2, ChronoUnit.HOURS).minusSeconds(60))) {
+            if (messageTime.isBefore(currentTime.plus(INACTIVE_NODE_THRESHOLD_HOURS, ChronoUnit.HOURS).minusSeconds(60))) {
                 iterator.remove();
-                notificationService.saveNotification(new ModelChangeNotification(NotificationType.WARNING, "Device lost: " + message.getMac(), message));
+                notifyInactiveNode(message);
             }
         }
-        // If node is in the model, conduct analysis
+
+        conductAnalysis();
+    }
+
+    private void notifyInactiveNode(NodeWifiMessage message) {
+        notificationService.saveNotification(new ModelChangeNotification(NotificationType.WARNING, "Device lost: " + message.getMac(), message));
+    }
+
+    private void conductAnalysis() {
         stabilityAnalyzer.detectCrashes(liveMessages);
         clusterAnalyzer.detectClusters(liveMessages);
-        for (String mac : liveMessages.stream().map(WifiMessage::getMac).toList()) {
-            stabilityAnalyzer.detectDelays(messagesForAnalysis.get(mac));
-            dropAnalyzer.detectDrops(messagesForAnalysis.get(mac));
-        }
+
+        liveMessages.stream()
+                .map(NodeWifiMessage::getMac)
+                .forEach(mac -> {
+                    stabilityAnalyzer.detectDelays(messagesForAnalysis.get(mac));
+                    dropAnalyzer.detectDrops(messagesForAnalysis.get(mac));
+                });
     }
+
 
     /**
      * Retrieves the current cluster information from the livemodel
      *
      * @return List containing list of MAC addresses to depict the cluster hierarchy.
      */
-    public List<List<String>> getClusters() {
+    public List<List<String>> getClusters()
+    {
         return clusterAnalyzer.getInternalCache();
     }
 

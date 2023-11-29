@@ -1,7 +1,7 @@
 package com.koren.digitaltwin.models.message;
 
-import com.koren.digitaltwin.models.message.data.SensorData;
-import com.koren.digitaltwin.models.message.data.WifiData;
+import com.koren.digitaltwin.models.message.data.wifi.SensorData;
+import com.koren.digitaltwin.models.message.data.wifi.WifiData;
 import com.koren.digitaltwin.utils.CastHelper;
 import org.bson.types.ObjectId;
 import org.springframework.boot.json.JacksonJsonParser;
@@ -18,25 +18,51 @@ public class MessageFactory{
      * @param data The JSON data representing the message.
      * @return An instance of a message (either MonitorMessage or WifiMessage).
      */
-    public Message createMessage(String data) {
-        var payload = parseJsonData(data);
-        var header = CastHelper.castToMapStringObject(payload.get("header"));
-        if ("ESP8266".equals(header.get("device"))) {
-            return new MonitorMessage(
+    public AbstractWifiMessage createMessage(String data) {
+        try {
+            var payload = parseJsonData(data);
+            var header = CastHelper.castToMapStringObject(payload.get("header"));
+            String deviceType = header.get("device") != null ? header.get("device").toString() : "";
+            return switch (deviceType) {
+                case "ESP8266" -> createMonitorWifiMessage(header, payload);
+                case "ESP32" -> createNodeWifiMessage(header, payload);
+                default -> throw new IllegalArgumentException("Unsupported device type " + deviceType);
+            };
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException("Error parsing JSON data", e);
+        }
+    }
+
+    /**
+     * Creates a MonitorWifiMessage instance based on the provided header and payload.
+     *
+     * @param header  The header information from the JSON data.
+     * @param payload The payload information from the JSON data.
+     * @return A new instance of MonitorWifiMessage.
+     */
+    private MonitorWifiMessage createMonitorWifiMessage(Map<String, Object> header, Map<String, Object> payload) {
+        return new MonitorWifiMessage(
                 new ObjectId(),
                 header.get("mac").toString(),
                 CastHelper.castToListMapStringObject(payload.get("networks"))
-            );
-        } else if ("ESP32".equals(header.get("device"))) {
-            return new WifiMessage(
-                    new ObjectId(),
-                    header.get("mac").toString(),
-                    new SensorData(CastHelper.castToMapStringObject(payload.get("measurements"))),
-                    new WifiData(CastHelper.castToMapStringObject(payload.get("operational")))
-            );
-        }
-        System.out.println("nah mate");
-        return null;
+        );
+    }
+
+    /**
+     * Creates a NodeWifiMessage instance based on the provided header and payload.
+     *
+     * @param header  The header information from the JSON data.
+     * @param payload The payload information from the JSON data.
+     * @return A new instance of NodeWifiMessage.
+     */
+    private NodeWifiMessage createNodeWifiMessage(Map<String, Object> header, Map<String, Object> payload) {
+        return new NodeWifiMessage(
+                new ObjectId(),
+                header.get("mac").toString(),
+                new SensorData(CastHelper.castToMapStringObject(payload.get("measurements"))),
+                new WifiData(CastHelper.castToMapStringObject(payload.get("operational")))
+        );
     }
 
     /**
@@ -48,6 +74,4 @@ public class MessageFactory{
     Map<String, Object> parseJsonData(String data) {
         return new JacksonJsonParser().parseMap(data);
     }
-
-
 }
