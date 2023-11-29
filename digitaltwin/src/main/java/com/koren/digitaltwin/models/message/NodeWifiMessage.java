@@ -1,8 +1,8 @@
 package com.koren.digitaltwin.models.message;
 
 import com.koren.digitaltwin.analysis.enums.MeasurementValueType;
-import com.koren.digitaltwin.models.message.data.SensorData;
-import com.koren.digitaltwin.models.message.data.WifiData;
+import com.koren.digitaltwin.models.message.data.wifi.SensorData;
+import com.koren.digitaltwin.models.message.data.wifi.WifiData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,7 +23,7 @@ import java.time.temporal.ChronoUnit;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class WifiMessage extends Message{
+public class NodeWifiMessage extends AbstractWifiMessage {
 
     /** Sensor data associated with the Wi-Fi message. */
     @Field
@@ -41,7 +41,7 @@ public class WifiMessage extends Message{
      * @param sensorData Sensor data associated with the Wi-Fi message.
      * @param wifiData   Wi-Fi data associated with the Wi-Fi message.
      */
-    WifiMessage(ObjectId id, String mac, SensorData sensorData, WifiData wifiData) {
+    NodeWifiMessage(ObjectId id, String mac, SensorData sensorData, WifiData wifiData) {
         super(id, mac);
         this.timestamp = ZonedDateTime.now(ZoneId.systemDefault()).toInstant().plus(2, ChronoUnit.HOURS);
         this.sensorData = sensorData;

@@ -1,6 +1,6 @@
-package com.koren.digitaltwin.models.message.data;
+package com.koren.digitaltwin.models.message.data.wifi;
 
-import com.koren.digitaltwin.models.enums.WifiMode;
+import com.koren.digitaltwin.models.message.data.wifi.enums.WifiMode;
 import com.koren.digitaltwin.utils.CastHelper;
 import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Field;

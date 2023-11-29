@@ -1,7 +1,7 @@
 package com.koren.digitaltwin.models.notification;
 
 import com.koren.digitaltwin.analysis.enums.MeasurementValueType;
-import com.koren.digitaltwin.models.message.WifiMessage;
+import com.koren.digitaltwin.models.message.NodeWifiMessage;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -22,7 +22,7 @@ public class DropNotification extends AbstractNotification {
     Number oldValue;
     @Field
     Number newValue;
-    public DropNotification(NotificationType type, String message, WifiMessage parent, MeasurementValueType measurementValueType, Number oldValue, Number newValue) {
+    public DropNotification(NotificationType type, String message, NodeWifiMessage parent, MeasurementValueType measurementValueType, Number oldValue, Number newValue) {
         super(type, message, parent);
         this.parent = parent;
         this.measurementValueType = measurementValueType;

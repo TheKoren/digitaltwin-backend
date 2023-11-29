@@ -1,9 +1,9 @@
 package com.koren.digitaltwin.controllers;
 
 import com.koren.digitaltwin.models.LiveModel;
-import com.koren.digitaltwin.models.message.Message;
-import com.koren.digitaltwin.models.message.MonitorMessage;
-import com.koren.digitaltwin.models.message.WifiMessage;
+import com.koren.digitaltwin.models.message.AbstractWifiMessage;
+import com.koren.digitaltwin.models.message.MonitorWifiMessage;
+import com.koren.digitaltwin.models.message.NodeWifiMessage;
 import com.koren.digitaltwin.services.DataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -47,7 +47,7 @@ public class DataController {
      * @return ResponseEntity containing the list of all Wifi messages.
      */
     @GetMapping
-    public ResponseEntity<List<WifiMessage>> getAllData() {
+    public ResponseEntity<List<NodeWifiMessage>> getAllData() {
         return new ResponseEntity<>(dataService.allData(), HttpStatus.OK);
     }
 
@@ -58,7 +58,7 @@ public class DataController {
      * @return ResponseEntity containing the optional latest Wifi message.
      */
     @GetMapping("/{mac}")
-    public ResponseEntity<Optional<Message>> getLatestData(@PathVariable String mac) {
+    public ResponseEntity<Optional<AbstractWifiMessage>> getLatestData(@PathVariable String mac) {
         return new ResponseEntity<>(dataService.latestData(mac), HttpStatus.OK);
     }
 
@@ -68,7 +68,7 @@ public class DataController {
      * @return ResponseEntity containing the optional list of live Wifi messages.
      */
     @GetMapping("/live")
-    public ResponseEntity<Optional<List<WifiMessage>>> getLiveModel() {
+    public ResponseEntity<Optional<List<NodeWifiMessage>>> getLiveModel() {
         return new ResponseEntity<>(liveModel.getLiveMessages(), HttpStatus.OK);
     }
 
@@ -78,7 +78,7 @@ public class DataController {
      * @return ResponseEntity containing the MonitorMessage.
      */
     @GetMapping("/monitor")
-    public ResponseEntity<MonitorMessage> getMonitorMessage() {
+    public ResponseEntity<MonitorWifiMessage> getMonitorMessage() {
         return new ResponseEntity<>(liveModel.getMonitorMessage(), HttpStatus.OK);
     }
 
@@ -109,7 +109,7 @@ public class DataController {
      * @return ResponseEntity containing the list of Wifi messages.
      */
     @GetMapping("/all/{mac}")
-    public ResponseEntity<List<Message>> getWifiMessageByMac(@PathVariable String mac) {
+    public ResponseEntity<List<AbstractWifiMessage>> getWifiMessageByMac(@PathVariable String mac) {
         return new ResponseEntity<>(dataService.wifiMessageByMac(mac), HttpStatus.OK);
     }
 
@@ -121,7 +121,7 @@ public class DataController {
      * @return ResponseEntity containing the list of Wifi messages.
      */
     @GetMapping("/all/{mac}/{num}")
-    public ResponseEntity<List<Message>> getWifiMessageByMacAndNumber(@PathVariable String mac, @PathVariable int num) {
+    public ResponseEntity<List<AbstractWifiMessage>> getWifiMessageByMacAndNumber(@PathVariable String mac, @PathVariable int num) {
         return new ResponseEntity<>(dataService.wifiMessageByMacAndNumber(mac, num), HttpStatus.OK);
     }
 

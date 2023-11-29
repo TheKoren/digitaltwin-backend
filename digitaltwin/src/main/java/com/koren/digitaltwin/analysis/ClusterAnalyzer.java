@@ -1,6 +1,6 @@
 package com.koren.digitaltwin.analysis;
 
-import com.koren.digitaltwin.models.message.WifiMessage;
+import com.koren.digitaltwin.models.message.NodeWifiMessage;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 
@@ -22,20 +22,20 @@ public class ClusterAnalyzer {
      *
      * @param messageList The list of WifiMessages to analyze for clusters.
      */
-    public void detectClusters(List<WifiMessage> messageList) {
+    public void detectClusters(List<NodeWifiMessage> messageList) {
         if (messageList.size() < 2) {
             return;
         }
-        List<List<WifiMessage>> clusters = new ArrayList<>();
-        for (WifiMessage message : messageList) {
+        List<List<NodeWifiMessage>> clusters = new ArrayList<>();
+        for (NodeWifiMessage message : messageList) {
             if (clusters.isEmpty()) {
-                List<WifiMessage> newCluster = new ArrayList<>();
+                List<NodeWifiMessage> newCluster = new ArrayList<>();
                 newCluster.add(message);
                 clusters.add(newCluster);
                 continue;
             }
             boolean foundCluster = false;
-            for (List<WifiMessage> cluster : clusters) {
+            for (List<NodeWifiMessage> cluster : clusters) {
                 foundCluster = isSimilarToCluster(message, cluster);
                 if (foundCluster) {
                     cluster.add(message);
@@ -43,7 +43,7 @@ public class ClusterAnalyzer {
                 }
             }
             if (!foundCluster) {
-                List<WifiMessage> newCluster = new ArrayList<>();
+                List<NodeWifiMessage> newCluster = new ArrayList<>();
                 newCluster.add(message);
                 clusters.add(newCluster);
             }
@@ -56,12 +56,12 @@ public class ClusterAnalyzer {
      *
      * @param clusters The list of clusters containing WifiMessages.
      */
-    private void updateInternalCache(List<List<WifiMessage>> clusters) {
+    private void updateInternalCache(List<List<NodeWifiMessage>> clusters) {
         List<List<String>> newInternalCache = new ArrayList<>();
 
-        for (List<WifiMessage> cluster : clusters) {
+        for (List<NodeWifiMessage> cluster : clusters) {
             List<String> macs = cluster.stream()
-                    .map(WifiMessage::getMac)
+                    .map(NodeWifiMessage::getMac)
                     .collect(Collectors.toList());
 
             newInternalCache.add(macs);
@@ -80,8 +80,8 @@ public class ClusterAnalyzer {
      * @param cluster List of messages from the comperable cluster.
      * @return True if there is a clustermessage that is similar; false otherwise.
      */
-    private boolean isSimilarToCluster(WifiMessage currentMessage, List<WifiMessage> cluster) {
-        for (WifiMessage messageFromCluster : cluster) {
+    private boolean isSimilarToCluster(NodeWifiMessage currentMessage, List<NodeWifiMessage> cluster) {
+        for (NodeWifiMessage messageFromCluster : cluster) {
             if (Math.abs(Math.abs(currentMessage.getWifiData().getRssi()) - Math.abs(messageFromCluster.getWifiData().getRssi())) <= 2 &&
                     !(Math.abs(currentMessage.getSensorData().getTemperatureValue() - messageFromCluster.getSensorData().getTemperatureValue()) > 3) &&
                     !(Math.abs(currentMessage.getSensorData().getSound() - messageFromCluster.getSensorData().getSound()) > 10)) {

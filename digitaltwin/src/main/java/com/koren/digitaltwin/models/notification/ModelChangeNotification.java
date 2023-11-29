@@ -1,12 +1,11 @@
 package com.koren.digitaltwin.models.notification;
 
-import com.koren.digitaltwin.models.message.WifiMessage;
+import com.koren.digitaltwin.models.message.NodeWifiMessage;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 /**
  * A specific type of notification representing a model change event in the digital twin system.
@@ -26,7 +25,7 @@ public class ModelChangeNotification extends AbstractNotification {
      * @param message The message associated with the notification.
      * @param parent  The parent WifiMessage associated with the model change.
      */
-    public ModelChangeNotification(NotificationType type, String message, WifiMessage parent) {
+    public ModelChangeNotification(NotificationType type, String message, NodeWifiMessage parent) {
         super(type, message, parent);
     }
 }

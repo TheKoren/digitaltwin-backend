@@ -1,6 +1,6 @@
 package com.koren.digitaltwin.models.notification;
 
-import com.koren.digitaltwin.models.message.WifiMessage;
+import com.koren.digitaltwin.models.message.NodeWifiMessage;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 public class ThresholdNotification extends AbstractNotification {
     @Field
     Long difference;
-    public ThresholdNotification(NotificationType type, String message, WifiMessage parent, long difference) {
+    public ThresholdNotification(NotificationType type, String message, NodeWifiMessage parent, long difference) {
         super(type, message, parent);
         this.difference = difference;
     }

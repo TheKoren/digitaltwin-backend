@@ -1,6 +1,6 @@
 package com.koren.digitaltwin.models.notification;
 
-import com.koren.digitaltwin.models.message.WifiMessage;
+import com.koren.digitaltwin.models.message.NodeWifiMessage;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
@@ -19,7 +19,7 @@ public abstract class AbstractNotification implements Notification {
     private NotificationType type;
     private String message;
     @Field
-    WifiMessage parent;
+    NodeWifiMessage parent;
 
     /**
      * Constructs an AbstractNotification with the specified type and message.
@@ -28,7 +28,7 @@ public abstract class AbstractNotification implements Notification {
      * @param type    The type of the notification.
      * @param message The message associated with the notification.
      */
-    AbstractNotification(NotificationType type, String message, WifiMessage parent) {
+    AbstractNotification(NotificationType type, String message, NodeWifiMessage parent) {
         this.type = type;
         this.message = message;
         this.id = new ObjectId();

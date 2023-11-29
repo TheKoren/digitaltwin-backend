@@ -1,4 +1,4 @@
-package com.koren.digitaltwin.models.enums;
+package com.koren.digitaltwin.models.message.data.wifi.enums;
 
 /**
  * Enum representing the possible modes of a Wi-Fi connection.

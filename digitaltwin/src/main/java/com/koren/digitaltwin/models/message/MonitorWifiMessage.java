@@ -1,6 +1,6 @@
 package com.koren.digitaltwin.models.message;
 
-import com.koren.digitaltwin.models.message.data.WifiNetwork;
+import com.koren.digitaltwin.models.message.data.wifi.WifiNetwork;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,7 +19,7 @@ import java.util.Comparator;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MonitorMessage extends Message {
+public class MonitorWifiMessage extends AbstractWifiMessage {
     /** List of Wi-Fi networks associated with the monitor message. */
     List<WifiNetwork> networksList = new ArrayList<>();
 
@@ -30,7 +30,7 @@ public class MonitorMessage extends Message {
      * @param mac       MAC address associated with the message.
      * @param networks  List of Wi-Fi networks associated with the monitor message.
      */
-    public MonitorMessage(ObjectId objectId, String mac, List<Map<String, Object>> networks) {
+    public MonitorWifiMessage(ObjectId objectId, String mac, List<Map<String, Object>> networks) {
         super(objectId, mac);
         List<WifiNetwork> networksList = new ArrayList<>();
         for (Map<String, Object> network : networks) {
