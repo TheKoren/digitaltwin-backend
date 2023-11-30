@@ -1,6 +1,7 @@
 package com.koren.digitaltwin.services;
 
 import com.koren.digitaltwin.models.message.AbstractWifiMessage;
+import com.koren.digitaltwin.models.message.Message;
 import com.koren.digitaltwin.models.message.NodeWifiMessage;
 import com.koren.digitaltwin.repositories.DataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,10 +36,10 @@ public class DataService {
      * @param mac MAC address of the Wi-Fi message.
      * @return Optional containing the latest Wi-Fi message if found, otherwise an empty optional.
      */
-    public Optional<AbstractWifiMessage> latestData(String mac) {
+    public Optional<Message> latestData(String mac) {
         return dataRepository.findMessagesByMac(mac)
                 .stream()
-                .max(Comparator.comparingLong(message -> message.timestamp.toEpochMilli()));
+                .max(Comparator.comparingLong(message -> message.getTimestamp().toEpochMilli()));
     }
 
     /**
@@ -70,7 +71,7 @@ public class DataService {
      * @param mac MAC address of the messages.
      * @return List of messages with the specified MAC address.
      */
-    public List<AbstractWifiMessage> wifiMessageByMac(String mac) {
+    public List<Message> wifiMessageByMac(String mac) {
         return dataRepository
                 .findMessagesByMac(mac);
     }
@@ -82,8 +83,8 @@ public class DataService {
      * @param num Number of recent messages to retrieve.
      * @return List of recent messages with the specified MAC address.
      */
-    public List<AbstractWifiMessage> wifiMessageByMacAndNumber(String mac, int num) {
-        List<AbstractWifiMessage> abstractWifiMessages = dataRepository.findMessagesByMac(mac);
+    public List<Message> wifiMessageByMacAndNumber(String mac, int num) {
+        List<Message> abstractWifiMessages = dataRepository.findMessagesByMac(mac);
         return abstractWifiMessages.size() <= num ? abstractWifiMessages : abstractWifiMessages.subList(abstractWifiMessages.size() - num, abstractWifiMessages.size());
     }
 

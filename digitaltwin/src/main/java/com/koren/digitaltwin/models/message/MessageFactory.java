@@ -18,7 +18,7 @@ public class MessageFactory{
      * @param data The JSON data representing the message.
      * @return An instance of a message (either MonitorMessage or WifiMessage).
      */
-    public AbstractWifiMessage createMessage(String data) {
+    public Message createMessage(String data) {
         try {
             var payload = parseJsonData(data);
             var header = CastHelper.castToMapStringObject(payload.get("header"));
