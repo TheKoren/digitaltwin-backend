@@ -23,6 +23,12 @@ import java.util.*;
 
 /**
  * Represents the live model in the digital twin system, managing live messages and conducting stability analysis.
+ *
+ * This class is responsible for maintaining a list of live WiFi messages, updating analysis maps,
+ * and conducting periodic stability analysis on the network nodes.
+ *
+ * @author TheKoren
+ * @version 1.0
  */
 @Component
 public class LiveModel {
@@ -68,6 +74,10 @@ public class LiveModel {
         updateLiveMessagesList(message);
     }
 
+    /**
+     * Updated the internal cache of messagesForAnalysis
+     * @param message WifiMessage from the network to be added to the list
+     */
     private void updateMessagesForAnalysis(NodeWifiMessage message) {
         String mac = message.getMac();
         List<NodeWifiMessage> macMessages = messagesForAnalysis.computeIfAbsent(mac, k -> new LinkedList<>());
@@ -78,6 +88,10 @@ public class LiveModel {
         macMessages.add(0, message);
     }
 
+    /**
+     * Updates the internalCache of liveMessages
+     * @param message WifiMessage from the network to be added to the model
+     */
     private void updateLiveMessagesList(NodeWifiMessage message) {
         Iterator<NodeWifiMessage> iterator = liveMessages.iterator();
         boolean found = false;
@@ -121,10 +135,17 @@ public class LiveModel {
         conductAnalysis();
     }
 
+    /**
+     * Creates ModelChangeNotification if device disconnects the network.
+     * @param message The Wifi message that was lost
+     */
     private void notifyInactiveNode(NodeWifiMessage message) {
         notificationService.saveNotification(new ModelChangeNotification(NotificationType.WARNING, "Device lost: " + message.getMac(), message));
     }
 
+    /**
+     * Conducts Analysis for liveMessages and messagesForAnalysis
+     */
     private void conductAnalysis() {
         stabilityAnalyzer.detectCrashes(liveMessages);
         clusterAnalyzer.detectClusters(liveMessages);
