@@ -1,6 +1,7 @@
 package com.koren.digitaltwin.repositories;
 
 import com.koren.digitaltwin.models.message.AbstractWifiMessage;
+import com.koren.digitaltwin.models.message.Message;
 import com.koren.digitaltwin.models.message.NodeWifiMessage;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -29,5 +30,5 @@ public interface DataRepository extends MongoRepository<NodeWifiMessage, ObjectI
      * @param mac MAC address of the messages.
      * @return A list of messages with the specified MAC address.
      */
-    List<AbstractWifiMessage> findMessagesByMac(String mac);
+    List<Message> findMessagesByMac(String mac);
 }

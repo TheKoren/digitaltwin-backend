@@ -2,6 +2,7 @@ package com.koren.digitaltwin.controllers;
 
 import com.koren.digitaltwin.models.LiveModel;
 import com.koren.digitaltwin.models.message.AbstractWifiMessage;
+import com.koren.digitaltwin.models.message.Message;
 import com.koren.digitaltwin.models.message.MonitorWifiMessage;
 import com.koren.digitaltwin.models.message.NodeWifiMessage;
 import com.koren.digitaltwin.services.DataService;
@@ -58,7 +59,7 @@ public class DataController {
      * @return ResponseEntity containing the optional latest Wifi message.
      */
     @GetMapping("/{mac}")
-    public ResponseEntity<Optional<AbstractWifiMessage>> getLatestData(@PathVariable String mac) {
+    public ResponseEntity<Optional<Message>> getLatestData(@PathVariable String mac) {
         return new ResponseEntity<>(dataService.latestData(mac), HttpStatus.OK);
     }
 
@@ -109,7 +110,7 @@ public class DataController {
      * @return ResponseEntity containing the list of Wifi messages.
      */
     @GetMapping("/all/{mac}")
-    public ResponseEntity<List<AbstractWifiMessage>> getWifiMessageByMac(@PathVariable String mac) {
+    public ResponseEntity<List<Message>> getWifiMessageByMac(@PathVariable String mac) {
         return new ResponseEntity<>(dataService.wifiMessageByMac(mac), HttpStatus.OK);
     }
 
@@ -121,7 +122,7 @@ public class DataController {
      * @return ResponseEntity containing the list of Wifi messages.
      */
     @GetMapping("/all/{mac}/{num}")
-    public ResponseEntity<List<AbstractWifiMessage>> getWifiMessageByMacAndNumber(@PathVariable String mac, @PathVariable int num) {
+    public ResponseEntity<List<Message>> getWifiMessageByMacAndNumber(@PathVariable String mac, @PathVariable int num) {
         return new ResponseEntity<>(dataService.wifiMessageByMacAndNumber(mac, num), HttpStatus.OK);
     }
 
